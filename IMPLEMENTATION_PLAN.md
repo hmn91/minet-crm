@@ -1,6 +1,6 @@
 # MiNet CRM — Implementation Plan
 
-> Cập nhật: 2026-02-24 | Trạng thái: **HOÀN THÀNH ✅**
+> Cập nhật: 2026-02-23 | Trạng thái: **HOÀN THÀNH ✅**
 
 ---
 
@@ -111,17 +111,34 @@
 
 ---
 
-## ✅ Build & Deploy Status
+## Phase 11: Testing ✅
 
-- `npm run build` — **PASS** (TypeScript clean, 2026-02-24)
-- `docker compose up` — **PASS** (HTTP 200, SPA served)
-- PWA precache: 12 entries, service worker + workbox generated
-- Bundle: 765 kB JS (232 kB gzip), 39 kB CSS
+- [x] Unit tests: 165/165 passing (vitest + happy-dom + fake-indexeddb)
+  - src/lib/__tests__: crypto, db, backup, notifications, utils
+  - src/stores/__tests__: authStore, settingsStore
+  - src/hooks/__tests__: useCustomFields
+  - src/components/__tests__: BottomNav
+- [x] E2E tests: 17/17 passing (playwright + Chromium headless, mobile-chrome Pixel 7)
+  - auth.spec.ts (4), backup-restore.spec.ts (3), contact-lifecycle.spec.ts (4)
+  - pin-security.spec.ts (3), reminders.spec.ts (3)
+- [ ] Kiểm thử mobile thực tế (375px viewport, PWA install, swipe actions)
 
 ---
 
-## ⚠️ WORKFLOW CHECKPOINT
-**Khi ALL tasks được mark `[x]`:**
-1. Báo cáo "Phase 3 Complete"
-2. Tạo `TEST_PLAN.md`
-3. **DỪNG — chờ Human review trước khi chạy test**
+## Phase 12: Deploy ✅
+
+- [x] Vercel deploy: https://minet-crm.vercel.app/
+- [x] Google OAuth Client ID configured (login + Drive backup hoạt động)
+- [x] Docker: HTTP 200, nginx serve SPA
+
+---
+
+## ✅ Build & Deploy Status
+
+- `npm run build` — **PASS** (TypeScript clean)
+- `npm run test:run` — **PASS** (165/165 unit tests)
+- `npm run test:e2e` — **PASS** (17/17 E2E tests, Chromium headless)
+- `docker compose up` — **PASS** (HTTP 200, SPA served)
+- Vercel: https://minet-crm.vercel.app/ ✅
+- PWA precache: 12 entries, service worker + workbox generated
+- Bundle: 766 kB JS (233 kB gzip), 39 kB CSS

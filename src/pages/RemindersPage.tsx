@@ -16,7 +16,7 @@ import { getContactDisplayName, formatDateTime } from '@/lib/utils'
 
 const schema = z.object({
   title: z.string().min(1, 'Vui lòng nhập tiêu đề'),
-  dueDate: z.string().min(1),
+  dueDate: z.string().min(1, 'Vui lòng chọn thời gian'),
   notes: z.string().optional(),
 })
 
@@ -35,7 +35,7 @@ export default function RemindersPage() {
     return map
   }) ?? {}
 
-  const { control, handleSubmit, formState: { isSubmitting } } = useForm<FormData>({
+  const { control, handleSubmit, formState: { isSubmitting, errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
       title: '',
@@ -74,12 +74,14 @@ export default function RemindersPage() {
             <Controller name="title" control={control} render={({ field }) => (
               <Input {...field} placeholder="Liên hệ follow-up, Gửi tài liệu..." autoFocus />
             )} />
+            {errors.title && <p className="text-xs text-red-500">{errors.title.message}</p>}
           </div>
           <div className="space-y-1.5">
             <Label>Thời gian nhắc *</Label>
             <Controller name="dueDate" control={control} render={({ field }) => (
               <Input {...field} type="datetime-local" />
             )} />
+            {errors.dueDate && <p className="text-xs text-red-500">{errors.dueDate.message}</p>}
           </div>
           <div className="space-y-1.5">
             <Label>Ghi chú</Label>

@@ -12,7 +12,10 @@ export function useReminders(contactId?: string) {
         .and(r => !r.isCompleted)
         .sortBy('dueDate')
     }
-    return db.reminders.where('isCompleted').equals(0).sortBy('dueDate')
+    // Use JavaScript-level filter for boolean isCompleted to ensure compatibility
+    // across all IDB implementations (browsers and fake-indexeddb in tests)
+    const all = await db.reminders.orderBy('dueDate').toArray()
+    return all.filter(r => !r.isCompleted)
   }, [contactId])
   return reminders ?? []
 }
@@ -20,12 +23,8 @@ export function useReminders(contactId?: string) {
 export function useDueReminders() {
   const reminders = useLiveQuery(async () => {
     const now = new Date().toISOString()
-    const all = await db.reminders
-      .where('isCompleted')
-      .equals(0)
-      .and(r => r.dueDate <= now)
-      .sortBy('dueDate')
-    return all
+    const all = await db.reminders.orderBy('dueDate').toArray()
+    return all.filter(r => !r.isCompleted && r.dueDate <= now)
   })
   return reminders ?? []
 }
@@ -35,12 +34,12 @@ export function useUpcomingReminders(days = 7) {
     const today = new Date()
     const future = new Date(today)
     future.setDate(future.getDate() + days)
-    const all = await db.reminders
-      .where('isCompleted')
-      .equals(0)
-      .and(r => r.dueDate >= today.toISOString() && r.dueDate <= future.toISOString())
-      .sortBy('dueDate')
-    return all
+    const all = await db.reminders.orderBy('dueDate').toArray()
+    return all.filter(
+      r => !r.isCompleted &&
+        r.dueDate >= today.toISOString() &&
+        r.dueDate <= future.toISOString()
+    )
   }, [days])
   return reminders ?? []
 }

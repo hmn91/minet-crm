@@ -71,7 +71,7 @@ export default function ContactFormPage() {
         lastName: contact.lastName,
         email: contact.email ?? '',
         phone: contact.phone ?? '',
-        companyId: contact.companyId ?? '',
+        companyId: contact.companyId ?? '__none__',
         title: contact.title ?? '',
         tier: contact.tier,
         relationshipType: contact.relationshipType,
@@ -108,7 +108,7 @@ export default function ContactFormPage() {
       lastName: data.lastName,
       email: data.email || undefined,
       phone: data.phone || undefined,
-      companyId: companyId || undefined,
+      companyId: (companyId && companyId !== '__none__') ? companyId : undefined,
       title: data.title || undefined,
       tier: data.tier,
       relationshipType: data.relationshipType,
@@ -195,7 +195,7 @@ export default function ContactFormPage() {
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger><SelectValue placeholder="Chọn công ty" /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Không có</SelectItem>
+                    <SelectItem value="__none__">Không có</SelectItem>
                     {companies.map(c => (
                       <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
                     ))}
@@ -215,6 +215,7 @@ export default function ContactFormPage() {
               <Controller name="email" control={control} render={({ field }) => (
                 <Input {...field} type="email" placeholder="email@company.com" />
               )} />
+              {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
             </div>
             <div className="space-y-1.5">
               <Label>Điện thoại</Label>

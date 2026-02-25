@@ -19,10 +19,9 @@ export async function checkAndNotifyDueReminders(): Promise<void> {
   if (!isNotificationGranted()) return
 
   const now = new Date().toISOString()
+  // Use JavaScript-level filter for boolean isCompleted (IDB type compatibility)
   const dueReminders = await db.reminders
-    .where('isCompleted')
-    .equals(0)
-    .and(r => r.dueDate <= now)
+    .filter(r => !r.isCompleted && r.dueDate <= now)
     .toArray()
 
   for (const reminder of dueReminders.slice(0, 5)) {

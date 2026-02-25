@@ -11,13 +11,13 @@ export function useContacts(filters?: {
   companyId?: string
 }) {
   const contacts = useLiveQuery(async () => {
-    let collection = db.contacts.orderBy('firstName')
+    let all: Contact[]
 
     if (filters?.tier) {
-      collection = db.contacts.where('tier').equals(filters.tier).sortBy('firstName') as unknown as typeof collection
+      all = await db.contacts.where('tier').equals(filters.tier).sortBy('firstName')
+    } else {
+      all = await db.contacts.orderBy('firstName').toArray()
     }
-
-    const all = await collection.toArray()
 
     return all.filter(c => {
       if (filters?.relationshipType && c.relationshipType !== filters.relationshipType) return false
