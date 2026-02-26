@@ -113,14 +113,18 @@
 
 ## Phase 11: Testing ✅
 
-- [x] Unit tests: 165/165 passing (vitest + happy-dom + fake-indexeddb)
-  - src/lib/__tests__: crypto, db, backup, notifications, utils
+- [x] Unit tests: **203/203 passing** (17 file, vitest + happy-dom + fake-indexeddb)
+  - src/lib/__tests__: crypto, db, backup, notifications, utils, businessLogic
   - src/stores/__tests__: authStore, settingsStore
-  - src/hooks/__tests__: useCustomFields
+  - src/hooks/__tests__: useCustomFields, useEvents
   - src/components/__tests__: BottomNav
-- [x] E2E tests: 17/17 passing (playwright + Chromium headless, mobile-chrome Pixel 7)
-  - auth.spec.ts (4), backup-restore.spec.ts (3), contact-lifecycle.spec.ts (4)
-  - pin-security.spec.ts (3), reminders.spec.ts (3)
+- [x] E2E tests: **133/135 passing, 2 skipped** (11 spec files, Playwright mobile-chrome Pixel 7)
+  - Spec files: contact-crud, settings-security, reminder-lifecycle
+  - Visual specs: visual-auth, visual-companies, visual-contacts-ext, visual-dashboard
+  - Visual specs: visual-events, visual-interactions, visual-misc, visual-settings-ext
+  - Covers: AUTH, PIN, DASH, CON, COMP, INT, EVT, SET, REM, UI, SEC modules
+- [x] Test Plan: **137/191 TC PASS (72%)**, 1 SKIP, 52 ⬜ manual-only
+  - Plan file: `/home/ngochm/.claude/plans/snoopy-yawning-locket.md`
 - [ ] Kiểm thử mobile thực tế (375px viewport, PWA install, swipe actions)
 
 ---
@@ -133,12 +137,33 @@
 
 ---
 
-## ✅ Build & Deploy Status
+## ✅ Build & Deploy Status (2026-02-26)
 
 - `npm run build` — **PASS** (TypeScript clean)
-- `npm run test:run` — **PASS** (165/165 unit tests)
-- `npm run test:e2e` — **PASS** (17/17 E2E tests, Chromium headless)
+- `npm run test:run` — **PASS** (203/203 unit tests)
+- `npm run test:e2e` — **PASS** (133/135 E2E tests, 2 skipped, mobile-chrome Pixel 7)
 - `docker compose up` — **PASS** (HTTP 200, SPA served)
 - Vercel: https://minet-crm.vercel.app/ ✅
 - PWA precache: 12 entries, service worker + workbox generated
-- Bundle: 766 kB JS (233 kB gzip), 39 kB CSS
+- Bundle: ~808 kB JS gzip, 39 kB CSS
+
+---
+
+## Việc còn lại / Next Steps
+
+### 1. 52 Test Case Manual (⬜)
+Các test case không thể tự động hóa — cần test thủ công trên thiết bị:
+- **Mobile gestures**: swipe-to-delete (CON-36), scroll, pull-to-refresh
+- **Dark mode visual**: DASH-11, dark mode toàn bộ UI
+- **PWA**: install prompt (UI-01, UI-02), offline mode, background sync
+- **Performance**: slow device, large dataset (1000+ contacts)
+
+### 2. Test Mobile Thực Tế
+- Test trên thiết bị 375px (iPhone SE) hoặc Pixel 7 (412px)
+- PWA install → add to home screen → standalone mode
+- Biometric authentication (FaceID/fingerprint)
+
+### 3. Code Splitting (Optional)
+- Bundle hiện tại: ~808 kB → mục tiêu ~300 kB
+- Lazy load từng route (`React.lazy` + `Suspense`)
+- Tách Dexie/backup/crypto thành dynamic imports
