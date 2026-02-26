@@ -168,6 +168,7 @@ export default function App() {
               <Route path="contacts/new" element={<ContactFormPage />} />
               <Route path="contacts/:id" element={<ContactDetailPage />} />
               <Route path="contacts/:id/edit" element={<ContactFormPage />} />
+              <Route path="interactions/new" element={<InteractionFormPage />} />
               <Route path="contacts/:id/interaction/new" element={<InteractionFormPage />} />
               <Route path="contacts/:id/reminder/new" element={<RemindersPage />} />
               <Route path="events" element={<EventsPage />} />

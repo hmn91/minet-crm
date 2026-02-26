@@ -60,7 +60,7 @@ export default function InteractionFormPage() {
         </Button>
       </div>
 
-      <form className="px-4 py-4 space-y-5 pb-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="px-4 py-4 space-y-5 pb-8">
         <div className="space-y-1.5">
           <Label>Loại tương tác</Label>
           <Controller name="type" control={control} render={({ field }) => (
