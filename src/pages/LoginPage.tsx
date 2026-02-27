@@ -171,7 +171,7 @@ export default function LoginPage() {
   // ─── Render ───────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 dark:from-blue-900/40 to-white dark:to-gray-800 px-6 py-12">
+    <div className="min-h-dvh flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 dark:from-blue-900/40 to-white dark:to-gray-800 px-6 py-12">
       {/* Logo */}
       <div className="flex flex-col items-center mb-10">
         <div className="w-20 h-20 bg-primary rounded-2xl flex items-center justify-center mb-4 shadow-lg">

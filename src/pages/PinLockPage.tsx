@@ -116,7 +116,7 @@ export default function PinLockPage() {
   const digits = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', 'del']
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background px-6">
+    <div className="min-h-dvh flex flex-col items-center justify-center bg-background px-6">
       {/* Avatar & name */}
       <div className="flex flex-col items-center mb-10">
         <Avatar className="w-20 h-20 mb-3">
