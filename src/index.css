@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Tailwind v4: use .dark class for dark: variants (instead of prefers-color-scheme media query).
+   The app toggles dark mode by adding/removing .dark class on <html>. */
+@custom-variant dark (&:is(.dark, .dark *));
+
 /* Map CSS custom properties → Tailwind v4 theme tokens so utilities like
    bg-background, bg-card, text-muted-foreground etc. all resolve correctly.
    @theme inline uses variable references so dark mode updates automatically. */
