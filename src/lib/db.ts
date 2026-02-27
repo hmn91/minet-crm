@@ -127,7 +127,7 @@ export async function importAllData(data: Awaited<ReturnType<typeof exportAllDat
 export async function clearAllData() {
   await db.transaction(
     'rw',
-    [db.contacts, db.companies, db.interactions, db.events, db.reminders, db.tags, db.customFieldDefs],
+    [db.contacts, db.companies, db.interactions, db.events, db.reminders, db.tags, db.customFieldDefs, db.userProfile, db.appSettings],
     async () => {
       await Promise.all([
         db.contacts.clear(),
@@ -137,6 +137,8 @@ export async function clearAllData() {
         db.reminders.clear(),
         db.tags.clear(),
         db.customFieldDefs.clear(),
+        db.userProfile.clear(),
+        db.appSettings.clear(),
       ])
     }
   )
