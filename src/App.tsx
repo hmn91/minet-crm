@@ -90,14 +90,15 @@ function AutoLockTimer() {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    if (!isAuthenticated || !settings.pinEnabled || settings.lockAfterMinutes < 0) return
+    if (!isAuthenticated || !settings.pinEnabled || settings.lockAfterMinutes < 0 || isPinLocked) return
 
-    const ms = settings.lockAfterMinutes * 60 * 1000
+    // Minimum 1s so the app can render after unlock before re-locking (prevents loop when lockAfterMinutes=0)
+    const ms = Math.max(settings.lockAfterMinutes * 60 * 1000, 1000)
 
     function resetTimer() {
       if (timerRef.current) clearTimeout(timerRef.current)
       timerRef.current = setTimeout(() => {
-        if (!isPinLocked) setPinLocked(true)
+        setPinLocked(true)
       }, ms)
     }
 
