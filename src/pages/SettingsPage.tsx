@@ -398,7 +398,7 @@ export default function SettingsPage() {
         </Card>
 
         {/* Custom fields */}
-        <Link to="/custom-fields">
+        <Link to="/settings/custom-fields">
           <Card className="hover:shadow-sm transition-shadow">
             <CardContent className="p-4 flex items-center gap-3">
               <div className="flex-1">
