@@ -65,7 +65,7 @@ export default function RemindersPage() {
           </button>
           <h1 className="font-semibold">Thêm nhắc nhở</h1>
           <Button size="sm" onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
-            Lưu
+            {isSubmitting ? 'Đang lưu...' : 'Thêm'}
           </Button>
         </div>
         <form className="px-4 py-4 space-y-5 pb-8" onSubmit={handleSubmit(onSubmit)}>
@@ -89,7 +89,6 @@ export default function RemindersPage() {
               <Textarea {...field} placeholder="Ghi chú thêm..." rows={3} />
             )} />
           </div>
-          <Button type="submit" className="w-full" size="lg">Thêm nhắc nhở</Button>
         </form>
       </div>
     )

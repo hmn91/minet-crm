@@ -138,7 +138,7 @@ export default function ContactFormPage() {
         </button>
         <h1 className="font-semibold">{isEditing ? 'Sửa liên hệ' : 'Thêm liên hệ mới'}</h1>
         <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting} size="sm">
-          {isSubmitting ? 'Đang lưu...' : 'Lưu'}
+          {isSubmitting ? 'Đang lưu...' : isEditing ? 'Lưu' : 'Thêm'}
         </Button>
       </div>
 
@@ -360,9 +360,6 @@ export default function ContactFormPage() {
           )} />
         </section>
 
-        <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
-          {isSubmitting ? 'Đang lưu...' : isEditing ? 'Cập nhật liên hệ' : 'Thêm liên hệ'}
-        </Button>
       </form>
     </div>
   )

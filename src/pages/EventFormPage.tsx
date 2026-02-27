@@ -110,7 +110,7 @@ export default function EventFormPage() {
         </button>
         <h1 className="font-semibold">{isEditing ? 'Sửa sự kiện' : 'Thêm sự kiện mới'}</h1>
         <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting} size="sm">
-          {isSubmitting ? 'Đang lưu...' : 'Lưu'}
+          {isSubmitting ? 'Đang lưu...' : isEditing ? 'Lưu' : 'Thêm'}
         </Button>
       </div>
 
@@ -248,9 +248,6 @@ export default function EventFormPage() {
           </div>
         </section>
 
-        <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
-          {isSubmitting ? 'Đang lưu...' : isEditing ? 'Cập nhật sự kiện' : 'Thêm sự kiện'}
-        </Button>
       </form>
     </div>
   )
