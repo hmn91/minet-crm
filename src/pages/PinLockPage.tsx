@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Delete, Fingerprint } from 'lucide-react'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
@@ -21,6 +21,13 @@ export default function PinLockPage() {
   const [error, setError] = useState('')
   const [isLocked, setIsLocked] = useState(false)
   const [lockUntil, setLockUntil] = useState<number | null>(null)
+
+  // If biometric is available, show biometric UI first; PIN is a fallback
+  const biometricAvailable = useMemo(
+    () => settings.biometricEnabled && !!settings.biometricCredentialId && isBiometricSupported(),
+    [settings.biometricEnabled, settings.biometricCredentialId]
+  )
+  const [showPin, setShowPin] = useState(!biometricAvailable)
 
   const displayName = userProfile?.displayName ?? 'Người dùng'
   const avatarUrl = userProfile?.customAvatarBase64 ?? userProfile?.avatarUrl
@@ -122,64 +129,94 @@ export default function PinLockPage() {
           )}
         </Avatar>
         <p className="text-lg font-semibold text-gray-800 dark:text-gray-200">Xin chào, {displayName.split(' ')[0]}</p>
-        <p className="text-sm text-muted-foreground mt-1">Nhập mã PIN để mở khóa</p>
+        <p className="text-sm text-muted-foreground mt-1">
+          {biometricAvailable && !showPin
+            ? 'Dùng vân tay / Face ID để mở khóa'
+            : 'Nhập mã PIN để mở khóa'}
+        </p>
       </div>
 
-      {/* PIN dots */}
-      <div className="flex gap-4 mb-8">
-        {dots.map((filled, i) => (
-          <div
-            key={i}
-            className={`w-4 h-4 rounded-full border-2 transition-all duration-150 ${
-              filled ? 'bg-primary border-primary scale-110' : 'border-gray-300 dark:border-gray-600'
-            }`}
-          />
-        ))}
-      </div>
+      {/* Biometric primary UI */}
+      {biometricAvailable && !showPin ? (
+        <>
+          <Button
+            variant="outline"
+            className="w-40 h-40 rounded-full flex flex-col gap-3 text-primary border-2 border-primary/30 hover:border-primary mb-6"
+            onClick={handleBiometric}
+          >
+            <Fingerprint size={52} />
+            <span className="text-sm font-medium">Chạm để xác thực</span>
+          </Button>
 
-      {/* Error */}
-      {error && (
-        <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
-      )}
+          {error && (
+            <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
+          )}
 
-      {/* Numpad */}
-      <div className="grid grid-cols-3 gap-4 w-full max-w-[280px]">
-        {digits.map((d, i) => {
-          if (d === '') return <div key={i} />
-          if (d === 'del') {
-            return (
-              <button
+          {settings.pinEnabled && (
+            <Button variant="ghost" className="mt-2 text-muted-foreground text-sm" onClick={() => setShowPin(true)}>
+              Dùng mã PIN thay thế
+            </Button>
+          )}
+        </>
+      ) : (
+        <>
+          {/* PIN dots */}
+          <div className="flex gap-4 mb-8">
+            {dots.map((filled, i) => (
+              <div
                 key={i}
-                onClick={handleDelete}
-                className="flex items-center justify-center h-16 rounded-2xl text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-95 transition-all"
-              >
-                <Delete size={22} />
-              </button>
-            )
-          }
-          return (
-            <button
-              key={i}
-              onClick={() => handleDigit(d)}
-              disabled={isLocked}
-              className="flex items-center justify-center h-16 rounded-2xl text-2xl font-medium text-gray-800 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-95 transition-all disabled:opacity-40 select-none"
-            >
-              {d}
-            </button>
-          )
-        })}
-      </div>
+                className={`w-4 h-4 rounded-full border-2 transition-all duration-150 ${
+                  filled ? 'bg-primary border-primary scale-110' : 'border-gray-300 dark:border-gray-600'
+                }`}
+              />
+            ))}
+          </div>
 
-      {/* Biometric button */}
-      {settings.biometricEnabled && isBiometricSupported() && (
-        <Button
-          variant="ghost"
-          className="mt-6 text-primary gap-2"
-          onClick={handleBiometric}
-        >
-          <Fingerprint size={22} />
-          Dùng vân tay / Face ID
-        </Button>
+          {/* Error */}
+          {error && (
+            <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
+          )}
+
+          {/* Numpad */}
+          <div className="grid grid-cols-3 gap-4 w-full max-w-[280px]">
+            {digits.map((d, i) => {
+              if (d === '') return <div key={i} />
+              if (d === 'del') {
+                return (
+                  <button
+                    key={i}
+                    onClick={handleDelete}
+                    className="flex items-center justify-center h-16 rounded-2xl text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-95 transition-all"
+                  >
+                    <Delete size={22} />
+                  </button>
+                )
+              }
+              return (
+                <button
+                  key={i}
+                  onClick={() => handleDigit(d)}
+                  disabled={isLocked}
+                  className="flex items-center justify-center h-16 rounded-2xl text-2xl font-medium text-gray-800 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-95 transition-all disabled:opacity-40 select-none"
+                >
+                  {d}
+                </button>
+              )
+            })}
+          </div>
+
+          {/* Switch back to biometric */}
+          {biometricAvailable && (
+            <Button
+              variant="ghost"
+              className="mt-6 text-primary gap-2"
+              onClick={() => { setShowPin(false); setError('') }}
+            >
+              <Fingerprint size={22} />
+              Dùng vân tay / Face ID
+            </Button>
+          )}
+        </>
       )}
     </div>
   )

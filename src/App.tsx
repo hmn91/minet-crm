@@ -66,8 +66,9 @@ function AppInitializer() {
       if (profile) {
         setUserProfile(profile)
         setAuthenticated(true)
-        // If PIN is enabled, start locked
-        if (settings.pinEnabled) {
+        // Read fresh settings from store (not stale closure) after loadSettings()
+        const freshSettings = useSettingsStore.getState().settings
+        if (freshSettings.pinEnabled) {
           setPinLocked(true)
         }
       }
