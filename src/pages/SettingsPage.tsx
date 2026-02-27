@@ -236,8 +236,6 @@ export default function SettingsPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="0">Ngay lập tức</SelectItem>
-                  <SelectItem value="0.5">30 giây</SelectItem>
                   <SelectItem value="1">1 phút</SelectItem>
                   <SelectItem value="5">5 phút</SelectItem>
                   <SelectItem value="-1">Không bao giờ</SelectItem>

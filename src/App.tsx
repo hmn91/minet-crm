@@ -71,6 +71,10 @@ function AppInitializer() {
         if (freshSettings.pinEnabled) {
           setPinLocked(true)
         }
+        // Migrate removed lock options (0=immediate, 0.5=30s) → 1 minute
+        if (freshSettings.lockAfterMinutes === 0 || freshSettings.lockAfterMinutes === 0.5) {
+          void useSettingsStore.getState().update({ lockAfterMinutes: 1 })
+        }
       }
       // Check reminders after init
       await checkAndNotifyDueReminders()
