@@ -68,6 +68,8 @@ function AppInitializer() {
         setAuthenticated(true)
         // Read fresh settings from store (not stale closure) after loadSettings()
         const freshSettings = useSettingsStore.getState().settings
+        // If user soft-logged-out, don't auto-login — let LoginPage handle restore flow
+        if (freshSettings.pendingLogin) return
         if (freshSettings.pinEnabled) {
           setPinLocked(true)
         }

@@ -9,7 +9,8 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { useAuthStore } from '@/stores/authStore'
-import { saveUserProfile, deleteUserProfile, clearAllData } from '@/lib/db'
+import { useSettingsStore } from '@/stores/settingsStore'
+import { saveUserProfile, clearAllData } from '@/lib/db'
 import { signOutGoogle } from '@/lib/auth'
 import { getInitials, resizeImageToBase64, now } from '@/lib/utils'
 import type { UserProfile } from '@/types'
@@ -24,6 +25,7 @@ interface FormData {
 export default function ProfilePage() {
   const navigate = useNavigate()
   const { userProfile, setUserProfile, setGoogleAccessToken, logout } = useAuthStore()
+  const { update: updateSettings } = useSettingsStore()
   const [avatar, setAvatar] = useState<string | undefined>(
     userProfile?.customAvatarBase64 ?? userProfile?.avatarUrl
   )
@@ -86,9 +88,14 @@ export default function ProfilePage() {
   async function handleSignOut() {
     signOutGoogle()
     setGoogleAccessToken(null)
-    // Delete only the profile (login credential); CRM data (contacts, events, etc.) stays in IDB
-    await deleteUserProfile()
-    setUserProfile(null)
+    // Clear PIN/biometric config, set pendingLogin; profile + CRM data stay intact
+    await updateSettings({
+      pinEnabled: false,
+      pinHash: undefined,
+      biometricEnabled: false,
+      biometricCredentialId: undefined,
+      pendingLogin: true,
+    })
     logout()
     navigate('/login', { replace: true })
   }

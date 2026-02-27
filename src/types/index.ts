@@ -163,6 +163,9 @@ export interface AppSettings {
   // Notifications
   notificationsEnabled: boolean
   reminderLeadDays: number   // Nhắc trước bao nhiêu ngày
+
+  // Auth state
+  pendingLogin: boolean  // true = user logged out, data preserved, waiting for re-login
 }
 
 // ============================================================
@@ -219,6 +222,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   language: 'vi',
   notificationsEnabled: false,
   reminderLeadDays: 3,
+  pendingLogin: false,
 }
 
 export const TIER_COLORS: Record<Tier, string> = {

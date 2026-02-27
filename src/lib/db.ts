@@ -128,6 +128,34 @@ export async function importAllData(data: Awaited<ReturnType<typeof exportAllDat
   )
 }
 
+export async function clearCRMData() {
+  await db.transaction(
+    'rw',
+    [db.contacts, db.companies, db.interactions, db.events, db.reminders, db.tags, db.customFieldDefs],
+    async () => {
+      await Promise.all([
+        db.contacts.clear(),
+        db.companies.clear(),
+        db.interactions.clear(),
+        db.events.clear(),
+        db.reminders.clear(),
+        db.tags.clear(),
+        db.customFieldDefs.clear(),
+      ])
+    }
+  )
+}
+
+export async function hasCRMData(): Promise<boolean> {
+  const counts = await Promise.all([
+    db.contacts.count(),
+    db.events.count(),
+    db.reminders.count(),
+    db.interactions.count(),
+  ])
+  return counts.some(c => c > 0)
+}
+
 export async function clearAllData() {
   await db.transaction(
     'rw',

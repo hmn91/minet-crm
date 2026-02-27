@@ -1,22 +1,37 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Shield, LogIn, ArrowRight, Loader2 } from 'lucide-react'
+import { Shield, LogIn, ArrowRight, Loader2, RotateCcw, PlusCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useAuthStore } from '@/stores/authStore'
-import { getUserProfile, saveUserProfile } from '@/lib/db'
+import { useSettingsStore } from '@/stores/settingsStore'
+import { getUserProfile, saveUserProfile, getAllSettings, clearCRMData, hasCRMData } from '@/lib/db'
 import { initGoogleAuth, signInWithGoogle } from '@/lib/auth'
 import { now } from '@/lib/utils'
 import type { UserProfile } from '@/types'
 
+// Pending info during restore decision
+type PendingGoogle = { accessToken: string; userInfo: { id: string; name: string; email: string; picture: string } }
+type PendingLocal = { displayName: string }
+
 export default function LoginPage() {
   const navigate = useNavigate()
   const { setAuthenticated, setUserProfile, setGoogleAccessToken } = useAuthStore()
+  const { update: updateSettings } = useSettingsStore()
+
   const [isLoading, setIsLoading] = useState(false)
   const [showManual, setShowManual] = useState(false)
   const [manualName, setManualName] = useState('')
   const [error, setError] = useState('')
+
+  // Restore state
+  const [storedProfile, setStoredProfile] = useState<UserProfile | null>(null)
+  const [hasData, setHasData] = useState(false)
+  const [showRestoreDialog, setShowRestoreDialog] = useState(false)
+  const [pendingGoogle, setPendingGoogle] = useState<PendingGoogle | null>(null)
+  const [pendingLocal, setPendingLocal] = useState<PendingLocal | null>(null)
 
   useEffect(() => {
     // Load GIS script
@@ -31,24 +46,65 @@ export default function LoginPage() {
     }
   }, [])
 
+  // Check returning user
+  useEffect(() => {
+    async function checkReturnUser() {
+      const [profile, settings] = await Promise.all([getUserProfile(), getAllSettings()])
+      if (!profile) return
+      if (settings.pendingLogin) {
+        // User soft-logged-out — wait for restore decision
+        const dataExists = await hasCRMData()
+        setStoredProfile(profile)
+        setHasData(dataExists)
+      } else {
+        // Normal returning user — auto-login
+        setUserProfile(profile)
+        setAuthenticated(true)
+        navigate('/', { replace: true })
+      }
+    }
+    void checkReturnUser()
+  }, [navigate, setAuthenticated, setUserProfile])
+
+  // ─── Helpers ──────────────────────────────────────────────────────────────
+
+  function completeLogin(profile: UserProfile, googleToken?: string) {
+    saveUserProfile(profile)
+    setUserProfile(profile)
+    if (googleToken) setGoogleAccessToken(googleToken)
+    setAuthenticated(true)
+    navigate('/', { replace: true })
+  }
+
+  async function clearPendingAndProceed() {
+    await updateSettings({ pendingLogin: false })
+  }
+
+  // ─── Google login ──────────────────────────────────────────────────────────
+
   async function handleGoogleLogin() {
     setIsLoading(true)
     setError('')
     try {
       const { accessToken, userInfo } = await signInWithGoogle()
-      const profile: UserProfile = {
+
+      // Check if same account as soft-logged-out session with data
+      if (storedProfile && storedProfile.googleId === userInfo.id && hasData) {
+        setPendingGoogle({ accessToken, userInfo })
+        setShowRestoreDialog(true)
+        return
+      }
+
+      // Different account or no pending data — login normally
+      await clearPendingAndProceed()
+      completeLogin({
         id: 'current-user',
         googleId: userInfo.id,
         displayName: userInfo.name,
         email: userInfo.email,
         avatarUrl: userInfo.picture,
         updatedAt: now(),
-      }
-      await saveUserProfile(profile)
-      setUserProfile(profile)
-      setGoogleAccessToken(accessToken)
-      setAuthenticated(true)
-      navigate('/', { replace: true })
+      }, accessToken)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Đăng nhập thất bại. Vui lòng thử lại.')
     } finally {
@@ -56,29 +112,63 @@ export default function LoginPage() {
     }
   }
 
+  // ─── Local login ──────────────────────────────────────────────────────────
+
   async function handleManualLogin() {
-    if (!manualName.trim()) return
-    const profile: UserProfile = {
-      id: 'current-user',
-      displayName: manualName.trim(),
-      updatedAt: now(),
+    const name = manualName.trim()
+    if (!name) return
+
+    // Check if same name as soft-logged-out session with data
+    if (storedProfile && !storedProfile.googleId &&
+        storedProfile.displayName.trim().toLowerCase() === name.toLowerCase() && hasData) {
+      setPendingLocal({ displayName: name })
+      setShowRestoreDialog(true)
+      return
     }
-    await saveUserProfile(profile)
-    setUserProfile(profile)
-    setAuthenticated(true)
-    navigate('/', { replace: true })
+
+    await clearPendingAndProceed()
+    completeLogin({ id: 'current-user', displayName: name, updatedAt: now() })
   }
 
-  // Check if already has profile (returning user)
-  useEffect(() => {
-    getUserProfile().then(profile => {
-      if (profile) {
-        setUserProfile(profile)
-        setAuthenticated(true)
-        navigate('/', { replace: true })
-      }
-    })
-  }, [navigate, setAuthenticated, setUserProfile])
+  // ─── Restore dialog actions ────────────────────────────────────────────────
+
+  async function handleRestore() {
+    await clearPendingAndProceed()
+    if (pendingGoogle) {
+      completeLogin({
+        id: 'current-user',
+        googleId: pendingGoogle.userInfo.id,
+        displayName: pendingGoogle.userInfo.name,
+        email: pendingGoogle.userInfo.email,
+        avatarUrl: pendingGoogle.userInfo.picture,
+        updatedAt: now(),
+      }, pendingGoogle.accessToken)
+    } else if (pendingLocal) {
+      // Keep existing storedProfile data, just re-authenticate
+      completeLogin({ ...storedProfile!, displayName: pendingLocal.displayName, updatedAt: now() })
+    }
+    setShowRestoreDialog(false)
+  }
+
+  async function handleStartFresh() {
+    await clearCRMData()
+    await clearPendingAndProceed()
+    if (pendingGoogle) {
+      completeLogin({
+        id: 'current-user',
+        googleId: pendingGoogle.userInfo.id,
+        displayName: pendingGoogle.userInfo.name,
+        email: pendingGoogle.userInfo.email,
+        avatarUrl: pendingGoogle.userInfo.picture,
+        updatedAt: now(),
+      }, pendingGoogle.accessToken)
+    } else if (pendingLocal) {
+      completeLogin({ id: 'current-user', displayName: pendingLocal.displayName, updatedAt: now() })
+    }
+    setShowRestoreDialog(false)
+  }
+
+  // ─── Render ───────────────────────────────────────────────────────────────
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 dark:from-blue-900/40 to-white dark:to-gray-800 px-6 py-12">
@@ -171,6 +261,36 @@ export default function LoginPage() {
         <Shield size={14} className="shrink-0" />
         <span>Dữ liệu lưu hoàn toàn trên thiết bị của bạn. Không có server.</span>
       </div>
+
+      {/* Restore dialog */}
+      <Dialog open={showRestoreDialog} onOpenChange={setShowRestoreDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Tìm thấy dữ liệu cũ</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            Tài khoản <strong className="text-foreground">
+              {pendingGoogle?.userInfo.name ?? pendingLocal?.displayName}
+            </strong> có dữ liệu CRM chưa xóa trên thiết bị này. Bạn muốn làm gì?
+          </p>
+          <div className="flex flex-col gap-3 mt-2">
+            <Button className="gap-2 justify-start" onClick={handleRestore}>
+              <RotateCcw size={16} />
+              <div className="text-left">
+                <div className="font-medium">Khôi phục dữ liệu cũ</div>
+                <div className="text-xs font-normal opacity-80">Tiếp tục với toàn bộ liên hệ, sự kiện đã có</div>
+              </div>
+            </Button>
+            <Button variant="outline" className="gap-2 justify-start" onClick={handleStartFresh}>
+              <PlusCircle size={16} />
+              <div className="text-left">
+                <div className="font-medium">Bắt đầu mới</div>
+                <div className="text-xs font-normal opacity-80">Xóa dữ liệu cũ và tạo danh sách trống</div>
+              </div>
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
