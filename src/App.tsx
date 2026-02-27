@@ -89,7 +89,7 @@ function AutoLockTimer() {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    if (!isAuthenticated || !settings.pinEnabled || settings.lockAfterMinutes === 0) return
+    if (!isAuthenticated || !settings.pinEnabled || settings.lockAfterMinutes < 0) return
 
     const ms = settings.lockAfterMinutes * 60 * 1000
 

@@ -145,7 +145,7 @@ export interface AppSettings {
   pinHash?: string
   biometricEnabled: boolean
   biometricCredentialId?: string
-  lockAfterMinutes: number   // 0=immediate, 5, 15, 30, 60
+  lockAfterMinutes: number   // -1=never, 0=immediate, 0.5=30s, 1=1min, 5=5min
 
   // Backup
   autoBackupEnabled: boolean
@@ -209,7 +209,7 @@ export interface AuthState {
 export const DEFAULT_SETTINGS: AppSettings = {
   pinEnabled: false,
   biometricEnabled: false,
-  lockAfterMinutes: 15,
+  lockAfterMinutes: 5,
   autoBackupEnabled: false,
   autoBackupFrequency: 'weekly',
   autoBackupDestination: 'local',
