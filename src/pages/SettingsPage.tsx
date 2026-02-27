@@ -87,11 +87,17 @@ export default function SettingsPage() {
       await backupToLocalFile()
       setLocalStatus('success')
       setLocalMessage('Đã lưu file backup')
+      setTimeout(() => { setLocalStatus('idle'); setLocalMessage('') }, 3000)
     } catch (err) {
-      setLocalStatus('error')
-      setLocalMessage(String(err))
+      const code = (err as { code?: string }).code
+      if (code === 'cancelled') {
+        setLocalStatus('idle')
+      } else {
+        setLocalStatus('error')
+        setLocalMessage(String(err))
+        setTimeout(() => { setLocalStatus('idle'); setLocalMessage('') }, 3000)
+      }
     }
-    setTimeout(() => { setLocalStatus('idle'); setLocalMessage('') }, 3000)
   }
 
   async function handleRestoreFromFile(e: React.ChangeEvent<HTMLInputElement>) {

@@ -40,7 +40,9 @@ export async function backupToLocalFile(): Promise<void> {
       await writable.close()
       return
     } catch (err) {
-      if (err instanceof Error && err.name === 'AbortError') return
+      if (err instanceof Error && err.name === 'AbortError') {
+        throw Object.assign(new Error('cancelled'), { code: 'cancelled' })
+      }
       // Fall through to blob download
     }
   }
