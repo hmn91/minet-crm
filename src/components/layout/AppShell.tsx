@@ -4,7 +4,7 @@ import { OfflineBanner, UpdateBanner, InstallPrompt } from './PWABanners'
 
 export function AppShell() {
   return (
-    <div className="flex flex-col min-h-screen max-w-lg mx-auto bg-background">
+    <div className="flex flex-col min-h-screen w-full max-w-lg mx-auto bg-background">
       <OfflineBanner />
       <main className="flex-1 overflow-auto pb-20">
         <Outlet />
