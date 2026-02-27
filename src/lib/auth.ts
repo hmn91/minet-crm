@@ -90,6 +90,10 @@ export async function requestDriveAccess(): Promise<string> {
       resolve(resp.access_token)
     }) as (resp: unknown) => void
 
+    driveClient.error_callback = (err) => {
+      reject(Object.assign(new Error(err.type), { code: err.type }))
+    }
+
     driveClient.requestAccessToken({ prompt: '' })
   })
 }
@@ -141,6 +145,7 @@ declare namespace google {
   namespace accounts.oauth2 {
     interface TokenClient {
       callback: (resp: unknown) => void
+      error_callback: (err: { type: string }) => void
       requestAccessToken: (opts?: { prompt?: string }) => void
     }
   }

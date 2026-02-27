@@ -24,8 +24,10 @@ export default function SettingsPage() {
   const [pinConfirm, setPinConfirm] = useState('')
   const [pinStep, setPinStep] = useState<'enter' | 'confirm'>('enter')
   const [showClearConfirm, setShowClearConfirm] = useState(false)
-  const [backupStatus, setBackupStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
-  const [backupMessage, setBackupMessage] = useState('')
+  const [localStatus, setLocalStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [localMessage, setLocalMessage] = useState('')
+  const [driveStatus, setDriveStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [driveMessage, setDriveMessage] = useState('')
   const [driveFiles, setDriveFiles] = useState<{id: string; name: string; createdTime: string}[]>([])
   const [showDriveList, setShowDriveList] = useState(false)
 
@@ -79,16 +81,17 @@ export default function SettingsPage() {
   }
 
   async function handleLocalBackup() {
-    setBackupStatus('loading')
+    setLocalStatus('loading')
+    setLocalMessage('')
     try {
       await backupToLocalFile()
-      setBackupStatus('success')
-      setBackupMessage('Đã lưu file backup')
+      setLocalStatus('success')
+      setLocalMessage('Đã lưu file backup')
     } catch (err) {
-      setBackupStatus('error')
-      setBackupMessage(String(err))
+      setLocalStatus('error')
+      setLocalMessage(String(err))
     }
-    setTimeout(() => setBackupStatus('idle'), 3000)
+    setTimeout(() => { setLocalStatus('idle'); setLocalMessage('') }, 3000)
   }
 
   async function handleRestoreFromFile(e: React.ChangeEvent<HTMLInputElement>) {
@@ -105,17 +108,24 @@ export default function SettingsPage() {
   }
 
   async function handleDriveBackup() {
-    setBackupStatus('loading')
+    setDriveStatus('loading')
+    setDriveMessage('')
     try {
       const token = await requestDriveAccess()
       await backupToGoogleDrive(token)
-      setBackupStatus('success')
-      setBackupMessage('Đã backup lên Google Drive')
+      setDriveStatus('success')
+      setDriveMessage('Đã backup lên Google Drive')
+      setTimeout(() => { setDriveStatus('idle'); setDriveMessage('') }, 3000)
     } catch (err) {
-      setBackupStatus('error')
-      setBackupMessage(String(err))
+      const code = (err as { code?: string }).code
+      if (code === 'popup_closed' || code === 'popup_failed_to_open') {
+        setDriveStatus('idle')
+      } else {
+        setDriveStatus('error')
+        setDriveMessage(String(err))
+        setTimeout(() => { setDriveStatus('idle'); setDriveMessage('') }, 3000)
+      }
     }
-    setTimeout(() => setBackupStatus('idle'), 3000)
   }
 
   async function handleShowDriveList() {
@@ -298,13 +308,18 @@ export default function SettingsPage() {
                 size="sm"
                 className="w-full gap-2 justify-start"
                 onClick={handleLocalBackup}
-                disabled={backupStatus === 'loading'}
+                disabled={localStatus === 'loading'}
               >
-                {backupStatus === 'loading' ? <Loader2 size={14} className="animate-spin" /> :
-                 backupStatus === 'success' ? <Check size={14} className="text-green-500" /> :
+                {localStatus === 'loading' ? <Loader2 size={14} className="animate-spin" /> :
+                 localStatus === 'success' ? <Check size={14} className="text-green-500" /> :
                  <Download size={14} />}
                 Lưu file xuống thiết bị
               </Button>
+              {localMessage && (
+                <p className={`text-xs ${localStatus === 'error' ? 'text-red-500' : 'text-green-600'}`}>
+                  {localMessage}
+                </p>
+              )}
 
               <label className="block">
                 <Button variant="outline" size="sm" className="w-full gap-2 justify-start cursor-pointer" asChild>
@@ -321,13 +336,18 @@ export default function SettingsPage() {
                 size="sm"
                 className="w-full gap-2 justify-start"
                 onClick={handleDriveBackup}
-                disabled={backupStatus === 'loading'}
+                disabled={driveStatus === 'loading'}
               >
-                {backupStatus === 'loading' ? <Loader2 size={14} className="animate-spin" /> :
-                 backupStatus === 'success' ? <Check size={14} className="text-green-500" /> :
+                {driveStatus === 'loading' ? <Loader2 size={14} className="animate-spin" /> :
+                 driveStatus === 'success' ? <Check size={14} className="text-green-500" /> :
                  <CloudUpload size={14} />}
                 Backup lên Google Drive
               </Button>
+              {driveMessage && (
+                <p className={`text-xs ${driveStatus === 'error' ? 'text-red-500' : 'text-green-600'}`}>
+                  {driveMessage}
+                </p>
+              )}
 
               <Button
                 variant="outline"
@@ -338,12 +358,6 @@ export default function SettingsPage() {
                 <Download size={14} />
                 Khôi phục từ Google Drive
               </Button>
-
-              {backupMessage && (
-                <p className={`text-xs ${backupStatus === 'error' ? 'text-red-500' : 'text-green-600'}`}>
-                  {backupMessage}
-                </p>
-              )}
             </div>
           </CardContent>
         </Card>
