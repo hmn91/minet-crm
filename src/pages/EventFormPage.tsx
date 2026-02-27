@@ -114,7 +114,7 @@ export default function EventFormPage() {
         </Button>
       </div>
 
-      <form className="px-4 py-4 space-y-6 pb-8">
+      <form className="px-4 py-4 space-y-6 pb-8" onSubmit={handleSubmit(onSubmit)}>
         {/* Basic info */}
         <section className="space-y-4">
           <h2 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">Thông tin sự kiện</h2>

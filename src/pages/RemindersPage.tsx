@@ -68,7 +68,7 @@ export default function RemindersPage() {
             Lưu
           </Button>
         </div>
-        <form className="px-4 py-4 space-y-5 pb-8">
+        <form className="px-4 py-4 space-y-5 pb-8" onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-1.5">
             <Label>Tiêu đề *</Label>
             <Controller name="title" control={control} render={({ field }) => (
