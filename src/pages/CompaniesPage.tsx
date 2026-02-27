@@ -16,7 +16,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '@/lib/db'
 import type { Contact } from '@/types'
 
-// ─── Company Form ─────────────────────────────────────────────────────────────
+// ─── Schema ───────────────────────────────────────────────────────────────────
 
 const schema = z.object({
   name: z.string().min(1, 'Vui lòng nhập tên công ty'),
@@ -31,9 +31,13 @@ type FormData = z.infer<typeof schema>
 
 const SIZE_OPTIONS = ['1-10', '11-50', '51-200', '201-500', '500+']
 
-function CompanyForm({ companyId, onClose }: { companyId?: string; onClose: () => void }) {
-  const existing = useCompany(companyId)
-  const isEdit = !!companyId
+// ─── Company Form Page ────────────────────────────────────────────────────────
+
+export function CompanyFormPage() {
+  const { id } = useParams<{ id?: string }>()
+  const navigate = useNavigate()
+  const isEdit = !!id
+  const existing = useCompany(id)
 
   const { control, handleSubmit, formState: { isSubmitting, errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -58,96 +62,110 @@ function CompanyForm({ companyId, onClose }: { companyId?: string; onClose: () =
       size: data.size || undefined,
       notes: data.notes || undefined,
     }
-    if (isEdit && companyId) {
-      await updateCompany(companyId, payload)
-      toast.success('Đã cập nhật công ty')
+    if (isEdit && id) {
+      await updateCompany(id, payload)
+      navigate(`/companies/${id}`, { replace: true })
     } else {
-      await createCompany(payload)
-      toast.success('Đã thêm công ty')
+      const created = await createCompany(payload)
+      navigate(`/companies/${created.id}`, { replace: true })
     }
-    onClose()
   }
 
   return (
-    <div className="space-y-4 py-2">
-      <div className="space-y-1.5">
-        <Label>Tên công ty *</Label>
-        <Controller name="name" control={control} render={({ field }) => (
-          <Input {...field} placeholder="Công ty ABC" autoFocus />
-        )} />
-        {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
-      </div>
-      <div className="space-y-1.5">
-        <Label>Ngành nghề</Label>
-        <Controller name="industry" control={control} render={({ field }) => (
-          <Input {...field} placeholder="Công nghệ, Tài chính..." />
-        )} />
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        <div className="space-y-1.5">
-          <Label>Website</Label>
-          <Controller name="website" control={control} render={({ field }) => (
-            <Input {...field} placeholder="https://..." />
-          )} />
-        </div>
-        <div className="space-y-1.5">
-          <Label>Điện thoại</Label>
-          <Controller name="phone" control={control} render={({ field }) => (
-            <Input {...field} placeholder="028..." />
-          )} />
-        </div>
-      </div>
-      <div className="space-y-1.5">
-        <Label>Quy mô</Label>
-        <div className="flex flex-wrap gap-2">
-          <Controller name="size" control={control} render={({ field }) => (
-            <>
-              {SIZE_OPTIONS.map(s => (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() => field.onChange(field.value === s ? '' : s)}
-                  className={`px-3 py-1 rounded-full text-xs border transition-colors ${
-                    field.value === s
-                      ? 'bg-primary text-primary-foreground border-primary'
-                      : 'border-border text-muted-foreground hover:border-primary/50'
-                  }`}
-                >
-                  {s}
-                </button>
-              ))}
-            </>
-          )} />
-        </div>
-      </div>
-      <div className="space-y-1.5">
-        <Label>Địa chỉ</Label>
-        <Controller name="address" control={control} render={({ field }) => (
-          <Input {...field} placeholder="Số nhà, đường, quận, thành phố..." />
-        )} />
-      </div>
-      <div className="space-y-1.5">
-        <Label>Ghi chú</Label>
-        <Controller name="notes" control={control} render={({ field }) => (
-          <Textarea {...field} placeholder="Thông tin thêm..." rows={3} />
-        )} />
-      </div>
-      <div className="flex gap-3 pt-2">
-        <Button variant="outline" className="flex-1" onClick={onClose}>Hủy</Button>
-        <Button className="flex-1" onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
-          {isSubmitting ? 'Đang lưu...' : isEdit ? 'Cập nhật' : 'Thêm công ty'}
+    <div className="min-h-full bg-background">
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 py-3 border-b sticky top-0 bg-background z-10">
+        <button onClick={() => navigate(-1)} className="p-1 -ml-1">
+          <ArrowLeft size={22} className="text-gray-700 dark:text-gray-300" />
+        </button>
+        <h1 className="font-semibold">{isEdit ? 'Sửa công ty' : 'Thêm công ty mới'}</h1>
+        <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting} size="sm">
+          {isSubmitting ? 'Đang lưu...' : isEdit ? 'Lưu' : 'Thêm'}
         </Button>
       </div>
+
+      <form className="px-4 py-4 space-y-6 pb-8" onSubmit={handleSubmit(onSubmit)}>
+        <section className="space-y-4">
+          <h2 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">Thông tin cơ bản</h2>
+
+          <div className="space-y-1.5">
+            <Label>Tên công ty *</Label>
+            <Controller name="name" control={control} render={({ field }) => (
+              <Input {...field} placeholder="Công ty ABC" autoFocus />
+            )} />
+            {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>Ngành nghề</Label>
+            <Controller name="industry" control={control} render={({ field }) => (
+              <Input {...field} placeholder="Công nghệ, Tài chính..." />
+            )} />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label>Website</Label>
+              <Controller name="website" control={control} render={({ field }) => (
+                <Input {...field} placeholder="https://..." />
+              )} />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Điện thoại</Label>
+              <Controller name="phone" control={control} render={({ field }) => (
+                <Input {...field} placeholder="028..." />
+              )} />
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>Quy mô</Label>
+            <div className="flex flex-wrap gap-2">
+              <Controller name="size" control={control} render={({ field }) => (
+                <>
+                  {SIZE_OPTIONS.map(s => (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => field.onChange(field.value === s ? '' : s)}
+                      className={`px-3 py-1 rounded-full text-xs border transition-colors ${
+                        field.value === s
+                          ? 'bg-primary text-primary-foreground border-primary'
+                          : 'border-border text-muted-foreground hover:border-primary/50'
+                      }`}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </>
+              )} />
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>Địa chỉ</Label>
+            <Controller name="address" control={control} render={({ field }) => (
+              <Input {...field} placeholder="Số nhà, đường, quận, thành phố..." />
+            )} />
+          </div>
+        </section>
+
+        <section className="space-y-4">
+          <h2 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">Ghi chú</h2>
+          <Controller name="notes" control={control} render={({ field }) => (
+            <Textarea {...field} placeholder="Thông tin thêm..." rows={3} />
+          )} />
+        </section>
+      </form>
     </div>
   )
 }
 
-// ─── Company Detail (Sheet-style within page) ─────────────────────────────────
+// ─── Company Detail ────────────────────────────────────────────────────────────
 
 export function CompanyDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const [editOpen, setEditOpen] = useState(false)
   const [deleteOpen, setDeleteOpen] = useState(false)
 
   const company = useCompany(id)
@@ -177,7 +195,7 @@ export function CompanyDetailPage() {
         <button onClick={() => navigate(-1)} className="p-1 -ml-1"><ArrowLeft size={22} /></button>
         <h1 className="font-semibold truncate mx-2 flex-1">{company.name}</h1>
         <div className="flex gap-1">
-          <button onClick={() => setEditOpen(true)} className="p-2 hover:bg-accent rounded-lg">
+          <button onClick={() => navigate(`/companies/${id}/edit`)} className="p-2 hover:bg-accent rounded-lg">
             <Edit2 size={18} />
           </button>
           <button onClick={() => setDeleteOpen(true)} className="p-2 hover:bg-accent rounded-lg text-destructive">
@@ -255,16 +273,6 @@ export function CompanyDetailPage() {
         </div>
       </div>
 
-      {/* Edit dialog */}
-      <Dialog open={editOpen} onOpenChange={setEditOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Chỉnh sửa công ty</DialogTitle>
-          </DialogHeader>
-          <CompanyForm companyId={id} onClose={() => setEditOpen(false)} />
-        </DialogContent>
-      </Dialog>
-
       {/* Delete confirm */}
       <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <DialogContent>
@@ -289,7 +297,6 @@ export function CompanyDetailPage() {
 export default function CompaniesPage() {
   const navigate = useNavigate()
   const [search, setSearch] = useState('')
-  const [addOpen, setAddOpen] = useState(false)
 
   const companies = useCompanies(search)
 
@@ -308,7 +315,7 @@ export default function CompaniesPage() {
             <button onClick={() => navigate(-1)} className="p-1 -ml-1"><ArrowLeft size={20} /></button>
             <h1 className="text-xl font-bold">Công ty ({companies.length})</h1>
           </div>
-          <Button size="sm" onClick={() => setAddOpen(true)}>
+          <Button size="sm" onClick={() => navigate('/companies/new')}>
             <Plus size={16} className="mr-1" />Thêm
           </Button>
         </div>
@@ -331,7 +338,7 @@ export default function CompaniesPage() {
               {search ? 'Không tìm thấy công ty nào' : 'Chưa có công ty nào'}
             </p>
             {!search && (
-              <Button variant="outline" className="mt-4" onClick={() => setAddOpen(true)}>
+              <Button variant="outline" className="mt-4" onClick={() => navigate('/companies/new')}>
                 <Plus size={16} className="mr-1" />Thêm công ty đầu tiên
               </Button>
             )}
@@ -358,15 +365,6 @@ export default function CompaniesPage() {
           ))
         )}
       </div>
-
-      <Dialog open={addOpen} onOpenChange={setAddOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Thêm công ty</DialogTitle>
-          </DialogHeader>
-          <CompanyForm onClose={() => setAddOpen(false)} />
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }

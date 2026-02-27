@@ -23,7 +23,7 @@ import ProfilePage from '@/pages/ProfilePage'
 import SettingsPage from '@/pages/SettingsPage'
 import CustomFieldsPage from '@/pages/CustomFieldsPage'
 import InteractionFormPage from '@/pages/InteractionFormPage'
-import CompaniesPage, { CompanyDetailPage } from '@/pages/CompaniesPage'
+import CompaniesPage, { CompanyDetailPage, CompanyFormPage } from '@/pages/CompaniesPage'
 
 // ─── Guards ───────────────────────────────────────────────────────────────────
 
@@ -187,7 +187,9 @@ export default function App() {
               <Route path="reminders/new" element={<RemindersPage />} />
               <Route path="profile" element={<ProfilePage />} />
               <Route path="companies" element={<CompaniesPage />} />
+              <Route path="companies/new" element={<CompanyFormPage />} />
               <Route path="companies/:id" element={<CompanyDetailPage />} />
+              <Route path="companies/:id/edit" element={<CompanyFormPage />} />
               <Route path="settings" element={<SettingsPage />} />
               <Route path="settings/custom-fields" element={<CustomFieldsPage />} />
             </Route>
