@@ -168,7 +168,7 @@ export function CompanyDetailPage() {
     if (!id) return
     await deleteCompany(id)
     toast.success('Đã xóa công ty')
-    navigate('/settings', { replace: true })
+    navigate('/companies', { replace: true })
   }
 
   return (
