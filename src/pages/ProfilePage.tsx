@@ -1,14 +1,15 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Camera, Loader2, LogOut } from 'lucide-react'
+import { ArrowLeft, Camera, Loader2, LogOut, Trash2 } from 'lucide-react'
 import { useForm, Controller } from 'react-hook-form'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { useAuthStore } from '@/stores/authStore'
-import { saveUserProfile, deleteUserProfile } from '@/lib/db'
+import { saveUserProfile, deleteUserProfile, clearAllData } from '@/lib/db'
 import { signOutGoogle } from '@/lib/auth'
 import { getInitials, resizeImageToBase64, now } from '@/lib/utils'
 import type { UserProfile } from '@/types'
@@ -27,6 +28,8 @@ export default function ProfilePage() {
     userProfile?.customAvatarBase64 ?? userProfile?.avatarUrl
   )
   const [isLoading, setIsLoading] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const { control, handleSubmit, reset, formState: { isSubmitting } } = useForm<FormData>({
@@ -88,6 +91,21 @@ export default function ProfilePage() {
     setUserProfile(null)
     logout()
     navigate('/login', { replace: true })
+  }
+
+  async function handleDeleteAll() {
+    setIsDeleting(true)
+    try {
+      signOutGoogle()
+      setGoogleAccessToken(null)
+      await clearAllData()
+      setUserProfile(null)
+      logout()
+      navigate('/login', { replace: true })
+    } finally {
+      setIsDeleting(false)
+      setShowDeleteConfirm(false)
+    }
   }
 
   const displayName = userProfile?.displayName ?? 'Người dùng'
@@ -190,7 +208,7 @@ export default function ProfilePage() {
           </div>
         </section>
 
-        <div className="border-t pt-4">
+        <div className="border-t pt-4 space-y-2">
           <Button
             type="button"
             variant="ghost"
@@ -198,13 +216,53 @@ export default function ProfilePage() {
             onClick={handleSignOut}
           >
             <LogOut size={16} />
-            Đăng xuất Google
+            Đăng xuất
           </Button>
-          <p className="text-xs text-center text-muted-foreground mt-2">
+          <p className="text-xs text-center text-muted-foreground -mt-1">
             Dữ liệu CRM của bạn vẫn được giữ lại
+          </p>
+
+          <Button
+            type="button"
+            variant="ghost"
+            className="w-full text-red-700 dark:text-red-400 gap-2 justify-center"
+            onClick={() => setShowDeleteConfirm(true)}
+          >
+            <Trash2 size={16} />
+            Đăng xuất & xóa toàn bộ dữ liệu
+          </Button>
+          <p className="text-xs text-center text-muted-foreground -mt-1">
+            Không thể khôi phục sau khi xóa
           </p>
         </div>
       </form>
+
+      {/* Confirm delete dialog */}
+      <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-red-600">Xóa toàn bộ dữ liệu?</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            Tất cả liên hệ, sự kiện, nhắc nhở, tương tác và cài đặt sẽ bị xóa vĩnh viễn khỏi thiết bị này.
+            <strong className="text-foreground"> Hành động này không thể hoàn tác.</strong>
+          </p>
+          <DialogFooter className="gap-2 mt-2">
+            <Button variant="outline" onClick={() => setShowDeleteConfirm(false)} disabled={isDeleting}>
+              Hủy
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteAll}
+              disabled={isDeleting}
+              className="gap-2"
+            >
+              {isDeleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+              {isDeleting ? 'Đang xóa...' : 'Xóa tất cả'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
