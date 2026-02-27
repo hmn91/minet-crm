@@ -13,11 +13,11 @@ import { hashPIN, registerBiometric, isBiometricSupported } from '@/lib/crypto'
 import { backupToLocalFile, restoreFromLocalFile, backupToGoogleDrive, listDriveBackups, restoreFromGoogleDrive } from '@/lib/backup'
 import { requestDriveAccess } from '@/lib/auth'
 import { requestNotificationPermission } from '@/lib/notifications'
-import { clearAllData } from '@/lib/db'
+import { clearCRMData } from '@/lib/db'
 import { getInitials } from '@/lib/utils'
 
 export default function SettingsPage() {
-  const { userProfile, setAuthenticated } = useAuthStore()
+  const { userProfile } = useAuthStore()
   const { settings, update } = useSettingsStore()
   const [showPinSetup, setShowPinSetup] = useState(false)
   const [pinInput, setPinInput] = useState('')
@@ -142,8 +142,7 @@ export default function SettingsPage() {
   }
 
   async function handleClearData() {
-    await clearAllData()
-    setAuthenticated(false)
+    await clearCRMData()
     window.location.reload()
   }
 
