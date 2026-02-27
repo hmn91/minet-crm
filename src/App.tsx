@@ -57,7 +57,7 @@ function GuestOnly() {
 
 function AppInitializer() {
   const { setAuthenticated, setUserProfile, setPinLocked } = useAuthStore()
-  const { load: loadSettings, settings } = useSettingsStore()
+  const { load: loadSettings } = useSettingsStore()
 
   useEffect(() => {
     async function init() {
