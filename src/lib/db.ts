@@ -89,6 +89,10 @@ export async function saveUserProfile(profile: UserProfile): Promise<void> {
   await db.userProfile.put(profile)
 }
 
+export async function deleteUserProfile(): Promise<void> {
+  await db.userProfile.delete('current-user')
+}
+
 // ============================================================
 // Backup / Restore helpers
 // ============================================================

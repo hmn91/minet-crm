@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { useAuthStore } from '@/stores/authStore'
-import { saveUserProfile } from '@/lib/db'
+import { saveUserProfile, deleteUserProfile } from '@/lib/db'
 import { signOutGoogle } from '@/lib/auth'
 import { getInitials, resizeImageToBase64, now } from '@/lib/utils'
 import type { UserProfile } from '@/types'
@@ -22,7 +22,7 @@ interface FormData {
 
 export default function ProfilePage() {
   const navigate = useNavigate()
-  const { userProfile, setUserProfile, setGoogleAccessToken } = useAuthStore()
+  const { userProfile, setUserProfile, setGoogleAccessToken, logout } = useAuthStore()
   const [avatar, setAvatar] = useState<string | undefined>(
     userProfile?.customAvatarBase64 ?? userProfile?.avatarUrl
   )
@@ -80,11 +80,14 @@ export default function ProfilePage() {
     navigate(-1)
   }
 
-  function handleSignOut() {
+  async function handleSignOut() {
     signOutGoogle()
     setGoogleAccessToken(null)
-    // Keep the profile & data, just clear Google token
-    navigate('/')
+    // Delete only the profile (login credential); CRM data (contacts, events, etc.) stays in IDB
+    await deleteUserProfile()
+    setUserProfile(null)
+    logout()
+    navigate('/login', { replace: true })
   }
 
   const displayName = userProfile?.displayName ?? 'Người dùng'
