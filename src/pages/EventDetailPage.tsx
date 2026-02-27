@@ -47,7 +47,7 @@ export default function EventDetailPage() {
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b sticky top-0 bg-background z-10">
         <button onClick={() => navigate(-1)} className="p-1 -ml-1">
-          <ArrowLeft size={22} className="text-gray-700" />
+          <ArrowLeft size={22} className="text-gray-700 dark:text-gray-300" />
         </button>
         <div className="flex items-center gap-2">
           <Link to={`/events/${id}/edit`}>
@@ -65,7 +65,7 @@ export default function EventDetailPage() {
         {/* Title & date */}
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <h1 className="text-2xl font-bold text-gray-900 flex-1">{event.title}</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 flex-1">{event.title}</h1>
             {isPast && <Badge variant="secondary" className="text-xs shrink-0">Đã qua</Badge>}
           </div>
           <div className="flex flex-wrap gap-3 text-sm text-muted-foreground mt-2">
@@ -89,7 +89,7 @@ export default function EventDetailPage() {
         {event.description && (
           <Card>
             <CardContent className="p-4">
-              <p className="text-sm text-gray-700 whitespace-pre-wrap">{event.description}</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{event.description}</p>
             </CardContent>
           </Card>
         )}
@@ -109,7 +109,7 @@ export default function EventDetailPage() {
                   <Card className="hover:shadow-sm transition-shadow">
                     <CardContent className="p-3 flex items-center gap-3">
                       <Avatar className="w-9 h-9 shrink-0">
-                        <AvatarFallback className="text-xs bg-blue-50 text-blue-700 font-medium">
+                        <AvatarFallback className="text-xs bg-blue-50 dark:bg-blue-900/40 text-blue-700 font-medium">
                           {getInitials(getContactDisplayName(contact))}
                         </AvatarFallback>
                       </Avatar>
@@ -120,7 +120,7 @@ export default function EventDetailPage() {
                         </div>
                         <p className="text-xs text-muted-foreground truncate">{contact.title}</p>
                       </div>
-                      <ArrowRight size={14} className="text-gray-300 shrink-0" />
+                      <ArrowRight size={14} className="text-gray-300 dark:text-gray-600 shrink-0" />
                     </CardContent>
                   </Card>
                 </Link>
@@ -138,7 +138,7 @@ export default function EventDetailPage() {
               <CheckSquare size={16} className="text-green-500" />
               Kết quả sự kiện
             </h2>
-            <Card className="border-green-200 bg-green-50">
+            <Card className="border-green-200 bg-green-50 dark:bg-green-900/40">
               <CardContent className="p-4">
                 <p className="text-sm text-green-800 whitespace-pre-wrap">{event.outcome}</p>
               </CardContent>
@@ -153,7 +153,7 @@ export default function EventDetailPage() {
               <ArrowRight size={16} className="text-blue-500" />
               Bước tiếp theo
             </h2>
-            <Card className="border-blue-200 bg-blue-50">
+            <Card className="border-blue-200 bg-blue-50 dark:bg-blue-900/40">
               <CardContent className="p-4">
                 <p className="text-sm text-blue-800 whitespace-pre-wrap">{event.nextSteps}</p>
                 {event.followUpDate && (
@@ -169,7 +169,7 @@ export default function EventDetailPage() {
 
         {/* Empty outcome prompt */}
         {isPast && !event.outcome && (
-          <Card className="border-dashed border-gray-300">
+          <Card className="border-dashed border-gray-300 dark:border-gray-600">
             <CardContent className="p-4 text-center">
               <p className="text-sm text-muted-foreground mb-2">Chưa có kết quả sự kiện</p>
               <Link to={`/events/${id}/edit`}>

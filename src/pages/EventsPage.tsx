@@ -31,10 +31,10 @@ export default function EventsPage() {
       <div className="flex-1 overflow-auto px-4 py-4 space-y-6">
         {events.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-              <Calendar size={28} className="text-gray-400" />
+            <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
+              <Calendar size={28} className="text-gray-400 dark:text-gray-500" />
             </div>
-            <p className="text-gray-500 mb-4">Chưa có sự kiện nào</p>
+            <p className="text-gray-500 dark:text-gray-400 mb-4">Chưa có sự kiện nào</p>
             <Link to="/events/new">
               <Button size="sm">+ Thêm sự kiện đầu tiên</Button>
             </Link>
@@ -43,7 +43,7 @@ export default function EventsPage() {
           <>
             {upcoming.length > 0 && (
               <section>
-                <h2 className="font-semibold text-sm text-gray-700 mb-3">Sắp tới ({upcoming.length})</h2>
+                <h2 className="font-semibold text-sm text-gray-700 dark:text-gray-300 mb-3">Sắp tới ({upcoming.length})</h2>
                 <div className="space-y-2">
                   {upcoming.map(event => (
                     <EventCard key={event.id} event={event} />
@@ -79,14 +79,14 @@ function EventCard({ event, isPast = false }: { event: ReturnType<typeof useEven
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-              isPast ? 'bg-gray-100' : 'bg-blue-100'
+              isPast ? 'bg-gray-100 dark:bg-gray-700' : 'bg-blue-100 dark:bg-blue-900/40'
             }`}>
-              <Calendar size={18} className={isPast ? 'text-gray-500' : 'text-blue-600'} />
+              <Calendar size={18} className={isPast ? 'text-gray-500 dark:text-gray-400' : 'text-blue-600'} />
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-2">
                 <h3 className="font-medium text-sm leading-tight">{event.title}</h3>
-                <ChevronRight size={16} className="text-gray-300 shrink-0 mt-0.5" />
+                <ChevronRight size={16} className="text-gray-300 dark:text-gray-600 shrink-0 mt-0.5" />
               </div>
 
               <div className="flex flex-wrap gap-2 mt-1.5">

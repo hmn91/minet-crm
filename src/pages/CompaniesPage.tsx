@@ -241,10 +241,10 @@ export function CompanyDetailPage() {
                         {c.title && <p className="text-xs text-muted-foreground truncate">{c.title}</p>}
                       </div>
                       <span className={`text-xs px-1.5 py-0.5 rounded font-semibold ${
-                        c.tier === 'A' ? 'bg-red-100 text-red-700' :
-                        c.tier === 'B' ? 'bg-orange-100 text-orange-700' :
+                        c.tier === 'A' ? 'bg-red-100 dark:bg-red-900/40 text-red-700' :
+                        c.tier === 'B' ? 'bg-orange-100 dark:bg-orange-900/40 text-orange-700' :
                         c.tier === 'C' ? 'bg-yellow-100 text-yellow-700' :
-                        'bg-gray-100 text-gray-600'
+                        'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
                       }`}>{c.tier}</span>
                     </CardContent>
                   </Card>
@@ -326,7 +326,7 @@ export default function CompaniesPage() {
       <div className="px-4 py-4 space-y-2 pb-8">
         {companies.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
-            <Building2 size={40} className="text-gray-200 mb-3" />
+            <Building2 size={40} className="text-gray-200 dark:text-gray-600 mb-3" />
             <p className="text-muted-foreground text-sm">
               {search ? 'Không tìm thấy công ty nào' : 'Chưa có công ty nào'}
             </p>

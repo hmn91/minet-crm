@@ -81,27 +81,27 @@ export default function LoginPage() {
   }, [navigate, setAuthenticated, setUserProfile])
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-white px-6 py-12">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 dark:from-blue-900/40 to-white dark:to-gray-800 px-6 py-12">
       {/* Logo */}
       <div className="flex flex-col items-center mb-10">
         <div className="w-20 h-20 bg-primary rounded-2xl flex items-center justify-center mb-4 shadow-lg">
           <span className="text-white font-bold text-3xl">M</span>
         </div>
-        <h1 className="text-3xl font-bold text-gray-900">MiNet CRM</h1>
-        <p className="text-gray-500 mt-2 text-center text-sm">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">MiNet CRM</h1>
+        <p className="text-gray-500 dark:text-gray-400 mt-2 text-center text-sm">
           Quản lý quan hệ nhân sự chuyên nghiệp
         </p>
       </div>
 
       {/* Main card */}
-      <div className="w-full max-w-sm bg-white rounded-2xl shadow-lg p-8 space-y-4">
+      <div className="w-full max-w-sm bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 space-y-4">
         {!showManual ? (
           <>
             <Button
               onClick={handleGoogleLogin}
               disabled={isLoading}
               size="xl"
-              className="w-full bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 shadow-sm gap-3"
+              className="w-full bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 shadow-sm gap-3"
             >
               {isLoading ? (
                 <Loader2 className="animate-spin" size={20} />
@@ -117,17 +117,17 @@ export default function LoginPage() {
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200" />
+                <div className="w-full border-t border-gray-200 dark:border-gray-700" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="bg-white px-3 text-gray-400">hoặc</span>
+                <span className="bg-white dark:bg-gray-800 px-3 text-gray-400 dark:text-gray-500">hoặc</span>
               </div>
             </div>
 
             <Button
               onClick={() => setShowManual(true)}
               variant="ghost"
-              className="w-full text-gray-600 gap-2"
+              className="w-full text-gray-600 dark:text-gray-400 gap-2"
             >
               Tiếp tục không đăng nhập
               <ArrowRight size={16} />
@@ -137,11 +137,11 @@ export default function LoginPage() {
           <>
             <button
               onClick={() => setShowManual(false)}
-              className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1 mb-2"
+              className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 flex items-center gap-1 mb-2"
             >
               ← Quay lại
             </button>
-            <h2 className="font-semibold text-gray-900">Nhập tên của bạn</h2>
+            <h2 className="font-semibold text-gray-900 dark:text-gray-100">Nhập tên của bạn</h2>
             <div className="space-y-2">
               <Label htmlFor="name">Tên hiển thị</Label>
               <Input
@@ -167,7 +167,7 @@ export default function LoginPage() {
       </div>
 
       {/* Privacy note */}
-      <div className="mt-8 flex items-center gap-2 text-gray-400 text-xs text-center">
+      <div className="mt-8 flex items-center gap-2 text-gray-400 dark:text-gray-500 text-xs text-center">
         <Shield size={14} className="shrink-0" />
         <span>Dữ liệu lưu hoàn toàn trên thiết bị của bạn. Không có server.</span>
       </div>

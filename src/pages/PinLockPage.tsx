@@ -121,7 +121,7 @@ export default function PinLockPage() {
             </AvatarFallback>
           )}
         </Avatar>
-        <p className="text-lg font-semibold text-gray-800">Xin chào, {displayName.split(' ')[0]}</p>
+        <p className="text-lg font-semibold text-gray-800 dark:text-gray-200">Xin chào, {displayName.split(' ')[0]}</p>
         <p className="text-sm text-muted-foreground mt-1">Nhập mã PIN để mở khóa</p>
       </div>
 
@@ -131,7 +131,7 @@ export default function PinLockPage() {
           <div
             key={i}
             className={`w-4 h-4 rounded-full border-2 transition-all duration-150 ${
-              filled ? 'bg-primary border-primary scale-110' : 'border-gray-300'
+              filled ? 'bg-primary border-primary scale-110' : 'border-gray-300 dark:border-gray-600'
             }`}
           />
         ))}
@@ -151,7 +151,7 @@ export default function PinLockPage() {
               <button
                 key={i}
                 onClick={handleDelete}
-                className="flex items-center justify-center h-16 rounded-2xl text-gray-600 hover:bg-gray-100 active:scale-95 transition-all"
+                className="flex items-center justify-center h-16 rounded-2xl text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-95 transition-all"
               >
                 <Delete size={22} />
               </button>
@@ -162,7 +162,7 @@ export default function PinLockPage() {
               key={i}
               onClick={() => handleDigit(d)}
               disabled={isLocked}
-              className="flex items-center justify-center h-16 rounded-2xl text-2xl font-medium text-gray-800 bg-gray-50 hover:bg-gray-100 active:scale-95 transition-all disabled:opacity-40 select-none"
+              className="flex items-center justify-center h-16 rounded-2xl text-2xl font-medium text-gray-800 dark:text-gray-200 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-95 transition-all disabled:opacity-40 select-none"
             >
               {d}
             </button>

@@ -106,7 +106,7 @@ export default function EventFormPage() {
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b sticky top-0 bg-background z-10">
         <button onClick={() => navigate(-1)} className="p-1 -ml-1">
-          <ArrowLeft size={22} className="text-gray-700" />
+          <ArrowLeft size={22} className="text-gray-700 dark:text-gray-300" />
         </button>
         <h1 className="font-semibold">{isEditing ? 'Sửa sự kiện' : 'Thêm sự kiện mới'}</h1>
         <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting} size="sm">
@@ -202,11 +202,11 @@ export default function EventFormPage() {
                     type="button"
                     onClick={() => toggleContact(contact.id)}
                     className={`w-full flex items-center gap-2 p-2 rounded-lg text-left transition-colors ${
-                      selected ? 'bg-primary/10 text-primary' : 'hover:bg-gray-50'
+                      selected ? 'bg-primary/10 text-primary' : 'hover:bg-gray-50 dark:hover:bg-gray-800'
                     }`}
                   >
                     <Avatar className="w-7 h-7 shrink-0">
-                      <AvatarFallback className="text-[10px] bg-blue-50 text-blue-700">
+                      <AvatarFallback className="text-[10px] bg-blue-50 dark:bg-blue-900/40 text-blue-700">
                         {getInitials(getContactDisplayName(contact))}
                       </AvatarFallback>
                     </Avatar>

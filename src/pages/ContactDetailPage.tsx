@@ -64,7 +64,7 @@ export default function ContactDetailPage() {
       <div className="bg-background sticky top-0 z-10 border-b">
         <div className="flex items-center justify-between px-4 py-3">
           <button onClick={() => navigate(-1)} className="p-1 -ml-1">
-            <ArrowLeft size={22} className="text-gray-700" />
+            <ArrowLeft size={22} className="text-gray-700 dark:text-gray-300" />
           </button>
           <div className="flex items-center gap-2">
             <Link to={`/contacts/${id}/edit`}>
@@ -80,21 +80,21 @@ export default function ContactDetailPage() {
       </div>
 
       {/* Profile section */}
-      <div className="px-4 py-6 bg-gradient-to-b from-blue-50 to-background">
+      <div className="px-4 py-6 bg-gradient-to-b from-blue-50 dark:from-blue-900/40 to-background">
         <div className="flex flex-col items-center text-center">
           <Avatar className="w-20 h-20 mb-3">
-            <AvatarFallback className="bg-blue-100 text-blue-700 text-2xl font-bold">
+            <AvatarFallback className="bg-blue-100 dark:bg-blue-900/40 text-blue-700 text-2xl font-bold">
               {getInitials(displayName)}
             </AvatarFallback>
           </Avatar>
-          <h1 className="text-xl font-bold text-gray-900">{displayName}</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">{displayName}</h1>
           <div className="flex items-center gap-2 mt-1">
             <Badge variant={TIER_BADGE_VARIANT[contact.tier]}>
               Tier {contact.tier} — {TIER_LABELS[contact.tier]}
             </Badge>
           </div>
           {contact.title && (
-            <p className="text-sm text-gray-600 mt-1">{contact.title}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{contact.title}</p>
           )}
           {company && (
             <Link to={`/companies/${company.id}`} className="text-sm text-primary mt-0.5">
@@ -110,26 +110,26 @@ export default function ContactDetailPage() {
           {/* Quick actions */}
           <div className="flex gap-3 mt-4">
             {contact.phone && (
-              <a href={`tel:${contact.phone}`} className="flex flex-col items-center gap-1 p-3 bg-white rounded-xl border shadow-sm">
+              <a href={`tel:${contact.phone}`} className="flex flex-col items-center gap-1 p-3 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
                 <Phone size={18} className="text-green-600" />
-                <span className="text-[10px] text-gray-500">Gọi</span>
+                <span className="text-[10px] text-gray-500 dark:text-gray-400">Gọi</span>
               </a>
             )}
             {contact.email && (
-              <a href={`mailto:${contact.email}`} className="flex flex-col items-center gap-1 p-3 bg-white rounded-xl border shadow-sm">
+              <a href={`mailto:${contact.email}`} className="flex flex-col items-center gap-1 p-3 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
                 <Mail size={18} className="text-blue-600" />
-                <span className="text-[10px] text-gray-500">Email</span>
+                <span className="text-[10px] text-gray-500 dark:text-gray-400">Email</span>
               </a>
             )}
             {contact.linkedIn && (
-              <a href={contact.linkedIn} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 p-3 bg-white rounded-xl border shadow-sm">
+              <a href={contact.linkedIn} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 p-3 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
                 <Globe size={18} className="text-blue-700" />
-                <span className="text-[10px] text-gray-500">LinkedIn</span>
+                <span className="text-[10px] text-gray-500 dark:text-gray-400">LinkedIn</span>
               </a>
             )}
-            <Link to={`/interactions/new?contactId=${id}`} className="flex flex-col items-center gap-1 p-3 bg-white rounded-xl border shadow-sm">
+            <Link to={`/interactions/new?contactId=${id}`} className="flex flex-col items-center gap-1 p-3 bg-white dark:bg-gray-800 rounded-xl border shadow-sm">
               <Plus size={18} className="text-purple-600" />
-              <span className="text-[10px] text-gray-500">Ghi nhật ký</span>
+              <span className="text-[10px] text-gray-500 dark:text-gray-400">Ghi nhật ký</span>
             </Link>
           </div>
 
@@ -145,9 +145,9 @@ export default function ContactDetailPage() {
           {/* Last contact indicator */}
           {days !== null && (
             <div className={`mt-3 text-xs px-3 py-1 rounded-full ${
-              days <= 7 ? 'bg-green-50 text-green-600' :
+              days <= 7 ? 'bg-green-50 dark:bg-green-900/40 text-green-600' :
               days <= 30 ? 'bg-yellow-50 text-yellow-600' :
-              'bg-red-50 text-red-600'
+              'bg-red-50 dark:bg-red-900/40 text-red-600'
             }`}>
               Liên hệ lần cuối {days === 0 ? 'hôm nay' : `${days} ngày trước`}
             </div>
@@ -212,7 +212,7 @@ export default function ContactDetailPage() {
               <Card>
                 <CardContent className="p-4">
                   <h3 className="font-medium text-sm text-muted-foreground uppercase tracking-wide mb-2">Ghi chú</h3>
-                  <p className="text-sm text-gray-700 whitespace-pre-wrap">{contact.notes}</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{contact.notes}</p>
                 </CardContent>
               </Card>
             )}
@@ -256,13 +256,13 @@ export default function ContactDetailPage() {
                 {reminders.map(r => (
                   <Card key={r.id}>
                     <CardContent className="p-3 flex items-start gap-3">
-                      <div className="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+                      <div className="w-8 h-8 bg-orange-50 dark:bg-orange-900/40 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
                         <Calendar size={14} className="text-orange-500" />
                       </div>
                       <div>
                         <p className="font-medium text-sm">{r.title}</p>
                         <p className="text-xs text-muted-foreground">{formatDateTime(r.dueDate)}</p>
-                        {r.notes && <p className="text-xs text-gray-600 mt-1">{r.notes}</p>}
+                        {r.notes && <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{r.notes}</p>}
                       </div>
                     </CardContent>
                   </Card>
@@ -302,7 +302,7 @@ function InfoRow({ label, value, href }: { label: string; value: string; href?: 
           {value}
         </a>
       ) : (
-        <span className="text-sm text-gray-800 text-right truncate">{value}</span>
+        <span className="text-sm text-gray-800 dark:text-gray-200 text-right truncate">{value}</span>
       )}
     </div>
   )
@@ -322,11 +322,11 @@ function TimelineItem({ type, data }: {
   return (
     <Card>
       <CardContent className="p-3 flex gap-3">
-        <div className="w-7 h-7 bg-gray-50 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+        <div className="w-7 h-7 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center shrink-0 mt-0.5">
           {type === 'event' ? (
             <Calendar size={14} className="text-orange-500" />
           ) : (
-            icons[data.type ?? 'other'] ?? <MessageCircle size={14} className="text-gray-400" />
+            icons[data.type ?? 'other'] ?? <MessageCircle size={14} className="text-gray-400 dark:text-gray-500" />
           )}
         </div>
         <div className="flex-1 min-w-0">
@@ -336,14 +336,14 @@ function TimelineItem({ type, data }: {
             </span>
             <span className="text-xs text-muted-foreground shrink-0">{formatRelativeTime(data.date)}</span>
           </div>
-          {data.notes && <p className="text-xs text-gray-600 mt-0.5 line-clamp-2">{data.notes}</p>}
+          {data.notes && <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5 line-clamp-2">{data.notes}</p>}
           {data.outcome && (
-            <p className="text-xs text-green-700 mt-1 bg-green-50 px-2 py-1 rounded">
+            <p className="text-xs text-green-700 mt-1 bg-green-50 dark:bg-green-900/40 px-2 py-1 rounded">
               Kết quả: {data.outcome}
             </p>
           )}
           {data.nextSteps && (
-            <p className="text-xs text-blue-700 mt-1 bg-blue-50 px-2 py-1 rounded">
+            <p className="text-xs text-blue-700 mt-1 bg-blue-50 dark:bg-blue-900/40 px-2 py-1 rounded">
               Bước tiếp: {data.nextSteps}
             </p>
           )}

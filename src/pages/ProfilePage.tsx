@@ -94,7 +94,7 @@ export default function ProfilePage() {
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b sticky top-0 bg-background z-10">
         <button onClick={() => navigate(-1)} className="p-1 -ml-1">
-          <ArrowLeft size={22} className="text-gray-700" />
+          <ArrowLeft size={22} className="text-gray-700 dark:text-gray-300" />
         </button>
         <h1 className="font-semibold">Thông tin cá nhân</h1>
         <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting} size="sm">

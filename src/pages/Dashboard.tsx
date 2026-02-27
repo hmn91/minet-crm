@@ -67,12 +67,12 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">MiNet CRM</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">MiNet CRM</h1>
           <p className="text-sm text-muted-foreground">Xin chào, {firstName}!</p>
         </div>
         <div className="flex items-center gap-3">
           <Link to="/reminders" className="relative">
-            <Bell size={22} className="text-gray-600" />
+            <Bell size={22} className="text-gray-600 dark:text-gray-400" />
             {pendingReminders > 0 && (
               <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
                 {pendingReminders > 9 ? '9+' : pendingReminders}
@@ -126,7 +126,7 @@ export default function Dashboard() {
                     <CardContent className="p-3">
                       <div className="flex items-center gap-3">
                         <Avatar className="w-10 h-10 shrink-0">
-                          <AvatarFallback className="bg-gray-100 text-gray-700 text-sm font-medium">
+                          <AvatarFallback className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium">
                             {getInitials(getContactDisplayName(contact))}
                           </AvatarFallback>
                         </Avatar>
@@ -178,14 +178,14 @@ export default function Dashboard() {
               <Link key={event.id} to={`/events/${event.id}`}>
                 <Card className="hover:shadow-md transition-shadow">
                   <CardContent className="p-3 flex items-center gap-3">
-                    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center shrink-0">
+                    <div className="w-10 h-10 bg-green-100 dark:bg-green-900/40 rounded-lg flex items-center justify-center shrink-0">
                       <Calendar size={18} className="text-green-600" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-sm truncate">{event.title}</p>
                       <p className="text-xs text-muted-foreground">{formatRelativeTime(event.date)} · {event.contactIds.length} người</p>
                     </div>
-                    <ChevronRight size={16} className="text-gray-400 shrink-0" />
+                    <ChevronRight size={16} className="text-gray-400 dark:text-gray-500 shrink-0" />
                   </CardContent>
                 </Card>
               </Link>
@@ -204,7 +204,7 @@ export default function Dashboard() {
                 <Link key={inter.id} to={`/contacts/${inter.contactId}`}>
                   <Card className="hover:shadow-md transition-shadow">
                     <CardContent className="p-3 flex items-center gap-3">
-                      <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center shrink-0">
+                      <div className="w-10 h-10 bg-blue-50 dark:bg-blue-900/40 rounded-lg flex items-center justify-center shrink-0">
                         <TrendingUp size={16} className="text-blue-500" />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -225,8 +225,8 @@ export default function Dashboard() {
       {/* Empty state */}
       {totalContacts === 0 && (
         <div className="text-center py-12">
-          <Users size={48} className="mx-auto text-gray-200 mb-4" />
-          <h3 className="font-semibold text-gray-700 mb-2">Bắt đầu xây dựng mạng lưới</h3>
+          <Users size={48} className="mx-auto text-gray-200 dark:text-gray-600 mb-4" />
+          <h3 className="font-semibold text-gray-700 dark:text-gray-300 mb-2">Bắt đầu xây dựng mạng lưới</h3>
           <p className="text-sm text-muted-foreground mb-4">Thêm liên hệ đầu tiên của bạn</p>
           <Link to="/contacts/new" className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-2.5 rounded-lg text-sm font-medium">
             + Thêm liên hệ
@@ -242,11 +242,11 @@ function StatCard({ icon, value, label, to }: { icon: React.ReactNode; value: nu
     <Link to={to}>
       <Card className="hover:shadow-md transition-shadow">
         <CardContent className="p-4 flex items-center gap-3">
-          <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center">
+          <div className="w-10 h-10 bg-gray-50 dark:bg-gray-800 rounded-lg flex items-center justify-center">
             {icon}
           </div>
           <div>
-            <p className="text-2xl font-bold text-gray-900">{value}</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{value}</p>
             <p className="text-xs text-muted-foreground">{label}</p>
           </div>
         </CardContent>
@@ -258,7 +258,7 @@ function StatCard({ icon, value, label, to }: { icon: React.ReactNode; value: nu
 function SectionHeader({ title, to }: { title: string; to: string }) {
   return (
     <div className="flex items-center justify-between mb-2">
-      <h2 className="font-semibold text-gray-800">{title}</h2>
+      <h2 className="font-semibold text-gray-800 dark:text-gray-200">{title}</h2>
       <Link to={to} className="text-xs text-primary flex items-center gap-0.5">
         Xem tất cả <ChevronRight size={14} />
       </Link>
@@ -272,7 +272,7 @@ function ReminderItem({ title, dueDate, contactId }: { reminderId?: string; titl
     <Link to={`/contacts/${contactId}`}>
       <Card className="hover:shadow-md transition-shadow">
         <CardContent className="p-3 flex items-center gap-3">
-          <div className="w-10 h-10 bg-orange-50 rounded-lg flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 bg-orange-50 dark:bg-orange-900/40 rounded-lg flex items-center justify-center shrink-0">
             <Bell size={16} className="text-orange-500" />
           </div>
           <div className="flex-1 min-w-0">

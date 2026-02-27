@@ -98,8 +98,8 @@ export default function CustomFieldsPage() {
             </h2>
             <div className="space-y-2">
               {fields.map(def => (
-                <div key={def.id} className="flex items-center gap-3 p-3 bg-white rounded-xl border">
-                  <GripVertical size={16} className="text-gray-300 shrink-0" />
+                <div key={def.id} className="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-xl border">
+                  <GripVertical size={16} className="text-gray-300 dark:text-gray-600 shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-sm">{def.name}</span>
@@ -109,7 +109,7 @@ export default function CustomFieldsPage() {
                   </div>
                   <button
                     onClick={() => setDeleteTarget(def.id)}
-                    className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors shrink-0"
+                    className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/40 rounded-lg transition-colors shrink-0"
                   >
                     <Trash2 size={15} />
                   </button>
@@ -134,7 +134,7 @@ export default function CustomFieldsPage() {
                 <button
                   key={preset.name}
                   onClick={() => addPreset(preset)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-dashed border-gray-300 text-sm text-gray-600 hover:border-primary hover:text-primary transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-dashed border-gray-300 dark:border-gray-600 text-sm text-gray-600 dark:text-gray-400 hover:border-primary hover:text-primary transition-colors"
                 >
                   <Plus size={13} />
                   {preset.name}

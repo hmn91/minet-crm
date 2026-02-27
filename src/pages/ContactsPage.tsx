@@ -128,10 +128,10 @@ export default function ContactsPage() {
           </div>
         ) : contacts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-              <Search size={24} className="text-gray-400" />
+            <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
+              <Search size={24} className="text-gray-400 dark:text-gray-500" />
             </div>
-            <p className="text-gray-500 mb-4">
+            <p className="text-gray-500 dark:text-gray-400 mb-4">
               {search ? 'Không tìm thấy liên hệ' : 'Chưa có liên hệ nào'}
             </p>
             {!search && (
@@ -175,9 +175,9 @@ function ContactCard({ contact, tier }: { contact: ReturnType<typeof useContacts
 
   return (
     <Link to={`/contacts/${contact.id}`}>
-      <div className="flex items-center gap-3 p-3 bg-white rounded-xl border hover:shadow-sm transition-shadow active:scale-[0.98]">
+      <div className="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-xl border hover:shadow-sm transition-shadow active:scale-[0.98]">
         <Avatar className="w-11 h-11 shrink-0">
-          <AvatarFallback className="bg-blue-50 text-blue-700 font-medium text-sm">
+          <AvatarFallback className="bg-blue-50 dark:bg-blue-900/40 text-blue-700 font-medium text-sm">
             {getInitials(getContactDisplayName(contact))}
           </AvatarFallback>
         </Avatar>
@@ -197,7 +197,7 @@ function ContactCard({ contact, tier }: { contact: ReturnType<typeof useContacts
               <span>{days}d</span>
             </div>
           )}
-          <ChevronRight size={14} className="text-gray-300" />
+          <ChevronRight size={14} className="text-gray-300 dark:text-gray-600" />
         </div>
       </div>
     </Link>

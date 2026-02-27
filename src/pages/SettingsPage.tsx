@@ -161,7 +161,7 @@ export default function SettingsPage() {
   const pinDigits = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', 'del']
 
   return (
-    <div className="min-h-full bg-gray-50">
+    <div className="min-h-full bg-gray-50 dark:bg-gray-800">
       <div className="px-4 pt-4 pb-2">
         <h1 className="text-xl font-bold">Cài đặt</h1>
       </div>
@@ -185,7 +185,7 @@ export default function SettingsPage() {
                   <p className="font-semibold truncate">{displayName}</p>
                   <p className="text-xs text-muted-foreground truncate">{userProfile?.email ?? 'Chưa đăng nhập Google'}</p>
                 </div>
-                <ChevronRight size={16} className="text-gray-400" />
+                <ChevronRight size={16} className="text-gray-400 dark:text-gray-500" />
               </div>
             </CardContent>
           </Card>
@@ -405,7 +405,7 @@ export default function SettingsPage() {
                 <p className="font-medium text-sm">Trường tùy chỉnh</p>
                 <p className="text-xs text-muted-foreground">Quản lý trường dữ liệu tùy chỉnh</p>
               </div>
-              <ChevronRight size={16} className="text-gray-400" />
+              <ChevronRight size={16} className="text-gray-400 dark:text-gray-500" />
             </CardContent>
           </Card>
         </Link>
@@ -454,7 +454,7 @@ export default function SettingsPage() {
                 <div key={i} className={`w-3.5 h-3.5 rounded-full border-2 ${
                   (pinStep === 'enter' ? pinInput.length : pinConfirm.length) > i
                     ? 'bg-primary border-primary'
-                    : 'border-gray-300'
+                    : 'border-gray-300 dark:border-gray-600'
                 }`} />
               ))}
             </div>
@@ -467,14 +467,14 @@ export default function SettingsPage() {
                       if (pinStep === 'enter') setPinInput(p => p.slice(0, -1))
                       else setPinConfirm(p => p.slice(0, -1))
                     }}
-                    className="flex items-center justify-center h-12 rounded-xl text-gray-600 hover:bg-gray-100">
+                    className="flex items-center justify-center h-12 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
                     ⌫
                   </button>
                 )
                 return (
                   <button key={i} type="button"
                     onClick={() => handlePinDigit(d)}
-                    className="flex items-center justify-center h-12 rounded-xl text-xl font-medium bg-gray-50 hover:bg-gray-100 active:scale-95 transition-all select-none">
+                    className="flex items-center justify-center h-12 rounded-xl text-xl font-medium bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-95 transition-all select-none">
                     {d}
                   </button>
                 )
@@ -515,7 +515,7 @@ export default function SettingsPage() {
                 <button
                   key={f.id}
                   onClick={() => { setShowDriveList(false); handleRestoreFromDrive(f.id) }}
-                  className="w-full text-left p-3 rounded-lg border hover:bg-gray-50 transition-colors"
+                  className="w-full text-left p-3 rounded-lg border hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                 >
                   <p className="text-sm font-medium">{f.name}</p>
                   <p className="text-xs text-muted-foreground">{new Date(f.createdTime).toLocaleString('vi-VN')}</p>

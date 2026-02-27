@@ -134,7 +134,7 @@ export default function ContactFormPage() {
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b sticky top-0 bg-background z-10">
         <button onClick={() => navigate(-1)} className="p-1 -ml-1">
-          <ArrowLeft size={22} className="text-gray-700" />
+          <ArrowLeft size={22} className="text-gray-700 dark:text-gray-300" />
         </button>
         <h1 className="font-semibold">{isEditing ? 'Sửa liên hệ' : 'Thêm liên hệ mới'}</h1>
         <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting} size="sm">
@@ -178,14 +178,14 @@ export default function ContactFormPage() {
               <button
                 type="button"
                 onClick={() => setCompanyMode('select')}
-                className={`text-xs px-3 py-1 rounded-full border ${companyMode === 'select' ? 'bg-primary text-white border-primary' : 'border-gray-300 text-gray-600'}`}
+                className={`text-xs px-3 py-1 rounded-full border ${companyMode === 'select' ? 'bg-primary text-white border-primary' : 'border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400'}`}
               >
                 Chọn có sẵn
               </button>
               <button
                 type="button"
                 onClick={() => setCompanyMode('new')}
-                className={`text-xs px-3 py-1 rounded-full border ${companyMode === 'new' ? 'bg-primary text-white border-primary' : 'border-gray-300 text-gray-600'}`}
+                className={`text-xs px-3 py-1 rounded-full border ${companyMode === 'new' ? 'bg-primary text-white border-primary' : 'border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400'}`}
               >
                 Tạo mới
               </button>
@@ -245,7 +245,7 @@ export default function ContactFormPage() {
                           : t === 'B' ? 'bg-orange-500 text-white border-orange-500'
                           : t === 'C' ? 'bg-yellow-500 text-white border-yellow-500'
                           : 'bg-gray-500 text-white border-gray-500'
-                        : 'bg-white text-gray-600 border-gray-200'
+                        : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700'
                     }`}
                   >
                     {t}

@@ -106,7 +106,7 @@ export default function RemindersPage() {
       <div className="px-4 py-4 space-y-3 pb-8">
         {reminders.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
-            <Bell size={40} className="text-gray-200 mb-3" />
+            <Bell size={40} className="text-gray-200 dark:text-gray-600 mb-3" />
             <p className="text-muted-foreground text-sm">Chưa có nhắc nhở nào</p>
           </div>
         ) : (
@@ -116,7 +116,7 @@ export default function RemindersPage() {
                 <CardContent className="p-3 flex items-start gap-3">
                   <button
                     onClick={() => completeReminder(r.id)}
-                    className="mt-0.5 shrink-0 w-5 h-5 rounded-full border-2 border-gray-300 hover:border-green-500 flex items-center justify-center transition-colors"
+                    className="mt-0.5 shrink-0 w-5 h-5 rounded-full border-2 border-gray-300 dark:border-gray-600 hover:border-green-500 flex items-center justify-center transition-colors"
                   >
                     <CheckCircle2 size={14} className="text-transparent hover:text-green-500" />
                   </button>
@@ -126,7 +126,7 @@ export default function RemindersPage() {
                       <p className="text-xs text-primary">{contactNames[r.contactId]}</p>
                     )}
                     <p className="text-xs text-muted-foreground">{formatDateTime(r.dueDate)}</p>
-                    {r.notes && <p className="text-xs text-gray-600 mt-1">{r.notes}</p>}
+                    {r.notes && <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{r.notes}</p>}
                   </div>
                 </CardContent>
               </Card>
