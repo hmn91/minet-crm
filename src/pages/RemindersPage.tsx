@@ -110,7 +110,7 @@ export default function RemindersPage() {
           </div>
         ) : (
           reminders.map(r => (
-            <SwipeToDelete key={r.id} onDelete={() => deleteReminder(r.id)}>
+            <SwipeToDelete key={r.id} onDelete={() => deleteReminder(r.id)} label={r.title}>
               <Card>
                 <CardContent className="p-3 flex items-start gap-3">
                   <button

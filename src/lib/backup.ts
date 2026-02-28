@@ -1,5 +1,5 @@
 import type { BackupData, DriveBackupFile, AppSettings } from '@/types'
-import { exportAllData, importAllData, clearAllData, setSetting, getSetting } from '@/lib/db'
+import { exportAllData, importAllData, clearCRMData, setSetting, getSetting } from '@/lib/db'
 import { downloadJSON, readFileAsText, now } from '@/lib/utils'
 
 const BACKUP_FILE_PREFIX = 'minet-crm-backup'
@@ -63,7 +63,8 @@ export async function restoreFromLocalFile(file: File, merge = false): Promise<v
   }
 
   if (!merge) {
-    await clearAllData()
+    // Chỉ xóa CRM data, giữ nguyên userProfile và appSettings để tránh bị sign out
+    await clearCRMData()
   }
 
   await importAllData(payload.data)
@@ -134,7 +135,7 @@ export async function restoreFromGoogleDrive(fileId: string, accessToken: string
   const payload = await response.json() as BackupData
   if (!payload.version || !payload.data) throw new Error('File backup không hợp lệ')
 
-  if (!merge) await clearAllData()
+  if (!merge) await clearCRMData()
   await importAllData(payload.data)
   await setSetting('lastBackupAt', now())
 }

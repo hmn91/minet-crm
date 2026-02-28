@@ -152,7 +152,7 @@ export default function ContactsPage() {
                 </div>
                 <div className="space-y-2">
                   {tierContacts.map(contact => (
-                    <SwipeToDelete key={contact.id} onDelete={() => deleteContact(contact.id)}>
+                    <SwipeToDelete key={contact.id} onDelete={() => deleteContact(contact.id)} label={getContactDisplayName(contact)}>
                       <ContactCard contact={contact} tier={tier} />
                     </SwipeToDelete>
                   ))}

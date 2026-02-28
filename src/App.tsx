@@ -108,12 +108,13 @@ function AutoLockTimer() {
       }, ms)
     }
 
-    const events = ['mousedown', 'mousemove', 'keydown', 'touchstart', 'scroll']
-    events.forEach(e => window.addEventListener(e, resetTimer, { passive: true }))
+    // Dùng document với capture để bắt scroll trong inner scrollable containers
+    const events = ['mousedown', 'touchstart', 'touchmove', 'keydown', 'click', 'scroll']
+    events.forEach(e => document.addEventListener(e, resetTimer, { passive: true, capture: true }))
     resetTimer()
 
     return () => {
-      events.forEach(e => window.removeEventListener(e, resetTimer))
+      events.forEach(e => document.removeEventListener(e, resetTimer, { capture: true } as EventListenerOptions))
       if (timerRef.current) clearTimeout(timerRef.current)
     }
   }, [isAuthenticated, isPinLocked, settings.pinEnabled, settings.lockAfterMinutes, setPinLocked])

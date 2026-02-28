@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Shield, CloudUpload, Bell, Moon, Trash2, Info, ChevronRight, Loader2, Download, Upload, Check } from 'lucide-react'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -10,13 +10,14 @@ import { Card, CardContent } from '@/components/ui/card'
 import { useAuthStore } from '@/stores/authStore'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { hashPIN, registerBiometric, isBiometricSupported } from '@/lib/crypto'
-import { backupToLocalFile, restoreFromLocalFile, backupToGoogleDrive, listDriveBackups, restoreFromGoogleDrive } from '@/lib/backup'
-import { requestDriveAccess } from '@/lib/auth'
+import { backupToLocalFile, restoreFromLocalFile } from '@/lib/backup'
 import { requestNotificationPermission } from '@/lib/notifications'
 import { clearCRMData } from '@/lib/db'
+import { toast } from 'sonner'
 import { getInitials } from '@/lib/utils'
 
 export default function SettingsPage() {
+  const navigate = useNavigate()
   const { userProfile } = useAuthStore()
   const { settings, update } = useSettingsStore()
   const [showPinSetup, setShowPinSetup] = useState(false)
@@ -26,10 +27,6 @@ export default function SettingsPage() {
   const [showClearConfirm, setShowClearConfirm] = useState(false)
   const [localStatus, setLocalStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [localMessage, setLocalMessage] = useState('')
-  const [driveStatus, setDriveStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
-  const [driveMessage, setDriveMessage] = useState('')
-  const [driveFiles, setDriveFiles] = useState<{id: string; name: string; createdTime: string}[]>([])
-  const [showDriveList, setShowDriveList] = useState(false)
 
   const avatarUrl = userProfile?.customAvatarBase64 ?? userProfile?.avatarUrl
   const displayName = userProfile?.displayName ?? 'Người dùng'
@@ -105,61 +102,19 @@ export default function SettingsPage() {
     if (!file) return
     try {
       await restoreFromLocalFile(file)
-      alert('Khôi phục dữ liệu thành công!')
-      window.location.reload()
+      toast.success('Khôi phục dữ liệu thành công!')
+      navigate('/', { replace: true })
     } catch (err) {
-      alert('Lỗi khôi phục: ' + String(err))
+      toast.error('Lỗi khôi phục: ' + String(err))
     }
     e.target.value = ''
   }
 
-  async function handleDriveBackup() {
-    setDriveStatus('loading')
-    setDriveMessage('')
-    try {
-      const token = await requestDriveAccess()
-      await backupToGoogleDrive(token)
-      setDriveStatus('success')
-      setDriveMessage('Đã backup lên Google Drive')
-      setTimeout(() => { setDriveStatus('idle'); setDriveMessage('') }, 3000)
-    } catch (err) {
-      const code = (err as { code?: string }).code
-      if (code === 'popup_closed' || code === 'popup_failed_to_open') {
-        setDriveStatus('idle')
-      } else {
-        setDriveStatus('error')
-        setDriveMessage(String(err))
-        setTimeout(() => { setDriveStatus('idle'); setDriveMessage('') }, 3000)
-      }
-    }
-  }
-
-  async function handleShowDriveList() {
-    try {
-      const token = await requestDriveAccess()
-      const files = await listDriveBackups(token)
-      setDriveFiles(files)
-      setShowDriveList(true)
-    } catch (err) {
-      alert('Lỗi: ' + String(err))
-    }
-  }
-
-  async function handleRestoreFromDrive(fileId: string) {
-    if (!confirm('Bạn có chắc muốn khôi phục từ backup này? Dữ liệu hiện tại sẽ bị ghi đè.')) return
-    try {
-      const token = await requestDriveAccess()
-      await restoreFromGoogleDrive(fileId, token)
-      alert('Khôi phục thành công!')
-      window.location.reload()
-    } catch (err) {
-      alert('Lỗi: ' + String(err))
-    }
-  }
-
   async function handleClearData() {
     await clearCRMData()
-    window.location.reload()
+    setShowClearConfirm(false)
+    toast.success('Đã xóa toàn bộ dữ liệu CRM')
+    navigate('/', { replace: true })
   }
 
   async function handleNotificationToggle(enabled: boolean) {
@@ -336,34 +291,6 @@ export default function SettingsPage() {
                 </Button>
                 <input type="file" accept=".json" className="hidden" onChange={handleRestoreFromFile} />
               </label>
-
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full gap-2 justify-start"
-                onClick={handleDriveBackup}
-                disabled={driveStatus === 'loading'}
-              >
-                {driveStatus === 'loading' ? <Loader2 size={14} className="animate-spin" /> :
-                 driveStatus === 'success' ? <Check size={14} className="text-green-500" /> :
-                 <CloudUpload size={14} />}
-                Backup lên Google Drive
-              </Button>
-              {driveMessage && (
-                <p className={`text-xs ${driveStatus === 'error' ? 'text-red-500' : 'text-green-600'}`}>
-                  {driveMessage}
-                </p>
-              )}
-
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full gap-2 justify-start"
-                onClick={handleShowDriveList}
-              >
-                <Download size={14} />
-                Khôi phục từ Google Drive
-              </Button>
             </div>
           </CardContent>
         </Card>
@@ -515,31 +442,6 @@ export default function SettingsPage() {
             <Button variant="outline" onClick={() => setShowClearConfirm(false)}>Hủy</Button>
             <Button variant="destructive" onClick={handleClearData}>Xóa tất cả</Button>
           </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Drive backup list */}
-      <Dialog open={showDriveList} onOpenChange={setShowDriveList}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Chọn backup để khôi phục</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-2 max-h-60 overflow-auto">
-            {driveFiles.length === 0 ? (
-              <p className="text-sm text-center text-muted-foreground py-4">Chưa có backup trên Drive</p>
-            ) : (
-              driveFiles.map(f => (
-                <button
-                  key={f.id}
-                  onClick={() => { setShowDriveList(false); handleRestoreFromDrive(f.id) }}
-                  className="w-full text-left p-3 rounded-lg border hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                >
-                  <p className="text-sm font-medium">{f.name}</p>
-                  <p className="text-xs text-muted-foreground">{new Date(f.createdTime).toLocaleString('vi-VN')}</p>
-                </button>
-              ))
-            )}
-          </div>
         </DialogContent>
       </Dialog>
     </div>

@@ -99,7 +99,7 @@ export default function EventDetailPage() {
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-semibold flex items-center gap-2">
               <Users size={16} className="text-blue-500" />
-              Người tham gia ({event.contactIds.length})
+              Người tham gia ({contacts?.filter(Boolean).length ?? event.contactIds.length})
             </h2>
           </div>
           {contacts && contacts.length > 0 ? (
