@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
-import { ArrowLeft, Building2, Plus, Search, Trash2, Edit2, Users, Globe, Phone } from 'lucide-react'
+import { ArrowLeft, Building2, Plus, Search, Trash2, Edit2, Users, Globe, Phone, Loader2 } from 'lucide-react'
 import { useForm, Controller } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -79,7 +79,8 @@ export function CompanyFormPage() {
           <ArrowLeft size={22} className="text-gray-700 dark:text-gray-300" />
         </button>
         <h1 className="font-semibold">{isEdit ? 'Sửa công ty' : 'Thêm công ty mới'}</h1>
-        <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting} size="sm">
+        <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting} size="sm" className="gap-1.5">
+          {isSubmitting && <Loader2 size={13} className="animate-spin" />}
           {isSubmitting ? 'Đang lưu...' : isEdit ? 'Lưu' : 'Thêm'}
         </Button>
       </div>

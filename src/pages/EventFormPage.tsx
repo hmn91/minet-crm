@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, X, Search } from 'lucide-react'
+import { ArrowLeft, X, Search, Loader2 } from 'lucide-react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -109,7 +109,8 @@ export default function EventFormPage() {
           <ArrowLeft size={22} className="text-gray-700 dark:text-gray-300" />
         </button>
         <h1 className="font-semibold">{isEditing ? 'Sửa sự kiện' : 'Thêm sự kiện mới'}</h1>
-        <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting} size="sm">
+        <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting} size="sm" className="gap-1.5">
+          {isSubmitting && <Loader2 size={13} className="animate-spin" />}
           {isSubmitting ? 'Đang lưu...' : isEditing ? 'Lưu' : 'Thêm'}
         </Button>
       </div>

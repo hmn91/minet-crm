@@ -1,5 +1,5 @@
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { ArrowLeft, Bell, CheckCircle2 } from 'lucide-react'
+import { ArrowLeft, Bell, CheckCircle2, Loader2 } from 'lucide-react'
 import { useForm, Controller } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -64,7 +64,8 @@ export default function RemindersPage() {
             <ArrowLeft size={22} />
           </button>
           <h1 className="font-semibold">Thêm nhắc nhở</h1>
-          <Button size="sm" onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
+          <Button size="sm" onClick={handleSubmit(onSubmit)} disabled={isSubmitting} className="gap-1.5">
+            {isSubmitting && <Loader2 size={13} className="animate-spin" />}
             {isSubmitting ? 'Đang lưu...' : 'Thêm'}
           </Button>
         </div>
@@ -109,8 +110,9 @@ export default function RemindersPage() {
             <p className="text-muted-foreground text-sm">Chưa có nhắc nhở nào</p>
           </div>
         ) : (
-          reminders.map(r => (
-            <SwipeToDelete key={r.id} onDelete={() => deleteReminder(r.id)} label={r.title}>
+          reminders.map((r, i) => (
+            <div key={r.id} className="animate-item-in" style={{ '--stagger': i } as React.CSSProperties}>
+            <SwipeToDelete onDelete={() => deleteReminder(r.id)} label={r.title}>
               <Card>
                 <CardContent className="p-3 flex items-start gap-3">
                   <button
@@ -130,6 +132,7 @@ export default function RemindersPage() {
                 </CardContent>
               </Card>
             </SwipeToDelete>
+            </div>
           ))
         )}
       </div>

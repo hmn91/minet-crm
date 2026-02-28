@@ -45,8 +45,10 @@ export default function EventsPage() {
               <section>
                 <h2 className="font-semibold text-sm text-gray-700 dark:text-gray-300 mb-3">Sắp tới ({upcoming.length})</h2>
                 <div className="space-y-2">
-                  {upcoming.map(event => (
-                    <EventCard key={event.id} event={event} />
+                  {upcoming.map((event, i) => (
+                    <div key={event.id} className="animate-item-in" style={{ '--stagger': i } as React.CSSProperties}>
+                      <EventCard event={event} />
+                    </div>
                   ))}
                 </div>
               </section>
@@ -56,8 +58,10 @@ export default function EventsPage() {
               <section>
                 <h2 className="font-semibold text-sm text-muted-foreground mb-3">Đã qua ({past.length})</h2>
                 <div className="space-y-2">
-                  {past.map(event => (
-                    <EventCard key={event.id} event={event} isPast />
+                  {past.map((event, i) => (
+                    <div key={event.id} className="animate-item-in" style={{ '--stagger': i } as React.CSSProperties}>
+                      <EventCard event={event} isPast />
+                    </div>
                   ))}
                 </div>
               </section>

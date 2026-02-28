@@ -1,5 +1,5 @@
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Loader2 } from 'lucide-react'
 import { useForm, Controller } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -55,7 +55,8 @@ export default function InteractionFormPage() {
           <ArrowLeft size={22} />
         </button>
         <h1 className="font-semibold">Ghi nhật ký tương tác</h1>
-        <Button size="sm" onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
+        <Button size="sm" onClick={handleSubmit(onSubmit)} disabled={isSubmitting} className="gap-1.5">
+          {isSubmitting && <Loader2 size={13} className="animate-spin" />}
           {isSubmitting ? 'Đang lưu...' : 'Lưu'}
         </Button>
       </div>
@@ -96,8 +97,9 @@ export default function InteractionFormPage() {
           )} />
         </div>
 
-        <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
-          Lưu tương tác
+        <Button type="submit" className="w-full gap-2" size="lg" disabled={isSubmitting}>
+          {isSubmitting && <Loader2 size={16} className="animate-spin" />}
+          {isSubmitting ? 'Đang lưu...' : 'Lưu tương tác'}
         </Button>
       </form>
     </div>

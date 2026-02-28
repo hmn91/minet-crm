@@ -151,10 +151,12 @@ export default function ContactsPage() {
                   <span className="text-xs text-muted-foreground">{TIER_LABELS[tier]} · {tierContacts.length}</span>
                 </div>
                 <div className="space-y-2">
-                  {tierContacts.map(contact => (
-                    <SwipeToDelete key={contact.id} onDelete={() => deleteContact(contact.id)} label={getContactDisplayName(contact)}>
-                      <ContactCard contact={contact} tier={tier} />
-                    </SwipeToDelete>
+                  {tierContacts.map((contact, i) => (
+                    <div key={contact.id} className="animate-item-in" style={{ '--stagger': i } as React.CSSProperties}>
+                      <SwipeToDelete onDelete={() => deleteContact(contact.id)} label={getContactDisplayName(contact)}>
+                        <ContactCard contact={contact} tier={tier} />
+                      </SwipeToDelete>
+                    </div>
                   ))}
                 </div>
               </div>

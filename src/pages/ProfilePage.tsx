@@ -125,7 +125,8 @@ export default function ProfilePage() {
           <ArrowLeft size={22} className="text-gray-700 dark:text-gray-300" />
         </button>
         <h1 className="font-semibold">Thông tin cá nhân</h1>
-        <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting} size="sm">
+        <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting} size="sm" className="gap-1.5">
+          {isSubmitting && <Loader2 size={13} className="animate-spin" />}
           {isSubmitting ? 'Đang lưu...' : 'Lưu'}
         </Button>
       </div>

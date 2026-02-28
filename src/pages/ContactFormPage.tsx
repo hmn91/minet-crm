@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, Plus, X } from 'lucide-react'
+import { ArrowLeft, Plus, X, Loader2 } from 'lucide-react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -137,7 +137,8 @@ export default function ContactFormPage() {
           <ArrowLeft size={22} className="text-gray-700 dark:text-gray-300" />
         </button>
         <h1 className="font-semibold">{isEditing ? 'Sửa liên hệ' : 'Thêm liên hệ mới'}</h1>
-        <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting} size="sm">
+        <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting} size="sm" className="gap-1.5">
+          {isSubmitting && <Loader2 size={13} className="animate-spin" />}
           {isSubmitting ? 'Đang lưu...' : isEditing ? 'Lưu' : 'Thêm'}
         </Button>
       </div>
